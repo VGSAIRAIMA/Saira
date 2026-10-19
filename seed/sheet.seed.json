@@ -1,0 +1,3505 @@
+{
+  "schemaVersion": 1,
+  "language": "java",
+  "sourceTags": {
+    "K": "Kunal Kushwaha DSA bootcamp (syllabus)",
+    "S": "Striver A2Z sheet",
+    "+": "Added, in neither source line"
+  },
+  "verification": {
+    "strivertotal": 495,
+    "striverSectionCountsFromLivePage": [
+      {
+        "section": "Beginner Problems",
+        "problems": 83
+      },
+      {
+        "section": "Sorting",
+        "problems": 7
+      },
+      {
+        "section": "Arrays",
+        "problems": 32
+      },
+      {
+        "section": "Hashing",
+        "problems": 6
+      },
+      {
+        "section": "Binary Search",
+        "problems": 32
+      },
+      {
+        "section": "Strings (Basic and Medium)",
+        "problems": 7
+      },
+      {
+        "section": "Recursion",
+        "problems": 22
+      },
+      {
+        "section": "Linked-List",
+        "problems": 49
+      },
+      {
+        "section": "Bit Manipulation",
+        "problems": 14
+      },
+      {
+        "section": "Greedy Algorithms",
+        "problems": 14
+      },
+      {
+        "section": "Sliding Window / 2 Pointer",
+        "problems": 13
+      },
+      {
+        "section": "Stack / Queues",
+        "problems": 31
+      },
+      {
+        "section": "Binary Trees",
+        "problems": 32
+      },
+      {
+        "section": "Binary Search Trees",
+        "problems": 15
+      },
+      {
+        "section": "Heaps",
+        "problems": 20
+      },
+      {
+        "section": "Graphs",
+        "problems": 46
+      },
+      {
+        "section": "Dynamic Programming",
+        "problems": 53
+      },
+      {
+        "section": "Tries",
+        "problems": 7
+      },
+      {
+        "section": "Strings (Advanced Algo)",
+        "problems": 9
+      },
+      {
+        "section": "Maths",
+        "problems": 3
+      }
+    ],
+    "unverified": [
+      "Individual Striver problem names (live sheet is JS-rendered)",
+      "Kunal video links and timestamps (syllabus file not retrievable)",
+      "Pattern names",
+      "All 'practice' entries are generic candidates, not Striver's exact list"
+    ]
+  },
+  "phases": [
+    {
+      "id": "p0",
+      "order": 0,
+      "title": "Programming and Java foundations",
+      "description": "Language, flow of a program, OOP and the Java toolbox you will use in every later phase.",
+      "topics": [
+        {
+          "id": "p0-git-and-github",
+          "order": 1,
+          "title": "Git and GitHub",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-git-and-github.1",
+              "title": "Version control: why and how it works",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.2",
+              "title": "Install and configure Git",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.3",
+              "title": "init, clone, add, commit",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.4",
+              "title": "Remotes: push and pull",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.5",
+              "title": "Branching and merging",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.6",
+              "title": "Fork and pull request",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.7",
+              "title": "Resolving merge conflicts",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-git-and-github.8",
+              "title": ".gitignore and good commit messages",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-introduction-to-programming",
+          "order": 2,
+          "title": "Introduction to programming",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Beginner Problems",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-introduction-to-programming.1",
+              "title": "Types of languages: compiled vs interpreted",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-introduction-to-programming.2",
+              "title": "Memory management: stack, heap, garbage collection",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-introduction-to-programming.3",
+              "title": "How to think like a programmer",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p0-introduction-to-programming.4",
+              "title": "Dry runs",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p0-introduction-to-programming.5",
+              "title": "Edge cases",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p0-introduction-to-programming.6",
+              "title": "Debugging",
+              "sources": [
+                "S"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-flowcharts-and-pseudocode",
+          "order": 3,
+          "title": "Flowcharts and pseudocode",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-flowcharts-and-pseudocode.1",
+              "title": "Flowchart symbols and flow of a program",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-flowcharts-and-pseudocode.2",
+              "title": "Pseudocode conventions",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-flowcharts-and-pseudocode.3",
+              "title": "Turn a problem statement into pseudocode",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-java-basics",
+          "order": 4,
+          "title": "Java basics",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-java-basics.1",
+              "title": "How Java works: JDK, JRE, JVM, bytecode",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.2",
+              "title": "Setup and first program",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.3",
+              "title": "Input and output",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.4",
+              "title": "Conditionals: if / else",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.5",
+              "title": "Loops: for, while, do-while",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.6",
+              "title": "Switch statements (incl. nested)",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.7",
+              "title": "Data types and type casting",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-java-basics.8",
+              "title": "Coding best practices",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-functions",
+          "order": 5,
+          "title": "Functions",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-functions.1",
+              "title": "Functions: introduction",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-functions.2",
+              "title": "Scoping",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-functions.3",
+              "title": "Shadowing",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-functions.4",
+              "title": "Varargs",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-functions.5",
+              "title": "Overloading",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-functions.6",
+              "title": "Pass by value in Java (primitives vs references)",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-object-oriented-programming",
+          "order": 6,
+          "title": "Object-oriented programming",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": "The roadmap line lists 18 OOP items. The 5 '+' ones were added to reach the 23 the earlier Phase 0 sheet claimed. Verify against Kunal's syllabus.",
+          "subtopics": [
+            {
+              "id": "p0-object-oriented-programming.1",
+              "title": "Classes and objects",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.2",
+              "title": "this keyword",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.3",
+              "title": "Inheritance",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.4",
+              "title": "Polymorphism",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.5",
+              "title": "Abstraction",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.6",
+              "title": "Encapsulation",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.7",
+              "title": "Interfaces",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.8",
+              "title": "Abstract classes",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.9",
+              "title": "static",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.10",
+              "title": "Packages",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.11",
+              "title": "Access control",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.12",
+              "title": "Generics",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.13",
+              "title": "Exceptions",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.14",
+              "title": "Enums",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.15",
+              "title": "Lambdas",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.16",
+              "title": "Singleton class",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.17",
+              "title": "Object cloning",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.18",
+              "title": "final, finalize, finally",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.19",
+              "title": "Constructors and constructor chaining",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.20",
+              "title": "Object class: equals, hashCode, toString",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.21",
+              "title": "Inner and anonymous classes",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.22",
+              "title": "Wrapper classes and autoboxing",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-object-oriented-programming.23",
+              "title": "Default and static methods in interfaces",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-java-collections-framework",
+          "order": 7,
+          "title": "Java Collections Framework",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Beginner Problems",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-java-collections-framework.1",
+              "title": "ArrayList",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-java-collections-framework.2",
+              "title": "Vector",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-java-collections-framework.3",
+              "title": "Comparable and Comparator",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-java-collections-framework.4",
+              "title": "LinkedList, Stack, Queue, Deque basics",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-java-collections-framework.5",
+              "title": "HashMap and HashSet basics",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p0-java-collections-framework.6",
+              "title": "Arrays and Collections utility classes",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-pattern-questions",
+          "order": 8,
+          "title": "Pattern questions",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Beginner Problems",
+          "note": "22 patterns per the roadmap. Pattern names are from memory and should be checked against Striver's pattern pages.",
+          "subtopics": [
+            {
+              "id": "p0-pattern-questions.1",
+              "title": "Pattern 1: Square of stars",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.2",
+              "title": "Pattern 2: Right-angled triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.3",
+              "title": "Pattern 3: Right-angled number triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.4",
+              "title": "Pattern 4: Right-angled number pyramid",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.5",
+              "title": "Pattern 5: Inverted right pyramid",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.6",
+              "title": "Pattern 6: Inverted numbered right pyramid",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.7",
+              "title": "Pattern 7: Star pyramid",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.8",
+              "title": "Pattern 8: Inverted star pyramid",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.9",
+              "title": "Pattern 9: Diamond",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.10",
+              "title": "Pattern 10: Half diamond",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.11",
+              "title": "Pattern 11: Binary number triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.12",
+              "title": "Pattern 12: Number crown",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.13",
+              "title": "Pattern 13: Increasing number triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.14",
+              "title": "Pattern 14: Increasing letter triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.15",
+              "title": "Pattern 15: Reverse letter triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.16",
+              "title": "Pattern 16: Alpha-ramp",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.17",
+              "title": "Pattern 17: Alpha-hill",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.18",
+              "title": "Pattern 18: Alpha-triangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.19",
+              "title": "Pattern 19: Symmetric void",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.20",
+              "title": "Pattern 20: Symmetric butterfly",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.21",
+              "title": "Pattern 21: Hollow rectangle",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p0-pattern-questions.22",
+              "title": "Pattern 22: The number pattern",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p0-file-handling",
+          "order": 9,
+          "title": "File handling",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p0-file-handling.1",
+              "title": "Read and write text files",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-file-handling.2",
+              "title": "Java I/O streams",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-file-handling.3",
+              "title": "Scanner vs BufferedReader",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p0-file-handling.4",
+              "title": "try-with-resources",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        }
+      ]
+    },
+    {
+      "id": "p1",
+      "order": 1,
+      "title": "Complexity and math",
+      "description": "How to measure an algorithm, plus the number theory and bit tricks used everywhere.",
+      "topics": [
+        {
+          "id": "p1-time-and-space-complexity",
+          "order": 1,
+          "title": "Time and space complexity",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Beginner Problems",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-time-and-space-complexity.1",
+              "title": "Big-O, Big-Omega, Big-Theta",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.2",
+              "title": "little-o",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.3",
+              "title": "Best, average and worst case",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.4",
+              "title": "Recurrence relations: linear",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.5",
+              "title": "Recurrence relations: divide and conquer",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.6",
+              "title": "Space complexity and auxiliary space",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.7",
+              "title": "Comparing cases",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-time-and-space-complexity.8",
+              "title": "Analysing loops and recursive calls (practice)",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p1-np-completeness-intro",
+          "order": 2,
+          "title": "NP-completeness (intro)",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-np-completeness-intro.1",
+              "title": "P vs NP",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p1-np-completeness-intro.2",
+              "title": "NP-hard",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p1-np-completeness-intro.3",
+              "title": "NP-complete and classic examples",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p1-basic-math",
+          "order": 3,
+          "title": "Basic math",
+          "sources": [
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Beginner Problems",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-basic-math.1",
+              "title": "Count digits",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.2",
+              "title": "Reverse a number",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.3",
+              "title": "Palindrome number",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.4",
+              "title": "Armstrong number",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.5",
+              "title": "Perfect number",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.6",
+              "title": "Factorial",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.7",
+              "title": "Print all divisors",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p1-basic-math.8",
+              "title": "Check prime",
+              "sources": [
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p1-basic-math.pr1",
+              "title": "Reverse Integer",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-basic-math.pr2",
+              "title": "Palindrome Number",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p1-primes-and-square-roots",
+          "order": 4,
+          "title": "Primes and square roots",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Maths",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-primes-and-square-roots.1",
+              "title": "Primality test up to sqrt(n)",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-primes-and-square-roots.2",
+              "title": "Sieve of Eratosthenes",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-primes-and-square-roots.3",
+              "title": "Prime factorisation",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p1-primes-and-square-roots.4",
+              "title": "Newton's square root method",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p1-primes-and-square-roots.pr1",
+              "title": "Count Primes",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-primes-and-square-roots.pr2",
+              "title": "Sqrt(x)",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p1-gcd-and-lcm",
+          "order": 5,
+          "title": "GCD and LCM",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Maths",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-gcd-and-lcm.1",
+              "title": "Euclidean algorithm",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-gcd-and-lcm.2",
+              "title": "LCM from GCD",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-gcd-and-lcm.3",
+              "title": "GCD of an array",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p1-gcd-and-lcm.pr1",
+              "title": "Greatest Common Divisor of Strings",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p1-modulo-and-number-theory-basics",
+          "order": 6,
+          "title": "Modulo and number theory basics",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-modulo-and-number-theory-basics.1",
+              "title": "Modulo properties",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p1-modulo-and-number-theory-basics.2",
+              "title": "Modular arithmetic for large results",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p1-modulo-and-number-theory-basics.3",
+              "title": "BigInteger",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p1-modulo-and-number-theory-basics.4",
+              "title": "BigDecimal",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p1-modulo-and-number-theory-basics.pr1",
+              "title": "Pow(x, n)",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p1-bit-manipulation",
+          "order": 7,
+          "title": "Bit manipulation",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Bit Manipulation",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p1-bit-manipulation.1",
+              "title": "Bitwise operators",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.2",
+              "title": "Range of numbers and two's complement",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.3",
+              "title": "Check, set, clear, toggle the i-th bit",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.4",
+              "title": "Power of two",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.5",
+              "title": "Count set bits",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.6",
+              "title": "XOR tricks (swap, single number)",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p1-bit-manipulation.7",
+              "title": "Common bit tricks",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p1-bit-manipulation.pr1",
+              "title": "Single Number",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-bit-manipulation.pr2",
+              "title": "Number of 1 Bits",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-bit-manipulation.pr3",
+              "title": "Power of Two",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-bit-manipulation.pr4",
+              "title": "Divide Two Integers",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-bit-manipulation.pr5",
+              "title": "Counting Bits",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p1-bit-manipulation.pr6",
+              "title": "Subsets (bitmask)",
+              "verified": false,
+              "link": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p2",
+      "order": 2,
+      "title": "Core structures and techniques",
+      "description": "The bread-and-butter toolkit: arrays, strings, hashing, search, sort, recursion, greedy.",
+      "topics": [
+        {
+          "id": "p2-arrays",
+          "order": 1,
+          "title": "Arrays",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Arrays",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-arrays.1",
+              "title": "Array basics and logic building",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.2",
+              "title": "Largest, second largest, check sorted",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.3",
+              "title": "Remove duplicates, move zeros",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.4",
+              "title": "Rotation",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.5",
+              "title": "FAQs: medium",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.6",
+              "title": "FAQs: hard",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.7",
+              "title": "Kadane's algorithm",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.8",
+              "title": "Prefix sum",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.9",
+              "title": "2D arrays and matrices",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-arrays.10",
+              "title": "Dutch national flag (sort 0/1/2)",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p2-arrays.11",
+              "title": "Two-sum and its variants",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-arrays.pr1",
+              "title": "Two Sum",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr2",
+              "title": "Maximum Subarray",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr3",
+              "title": "Best Time to Buy and Sell Stock",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr4",
+              "title": "Rotate Array",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr5",
+              "title": "Move Zeroes",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr6",
+              "title": "Sort Colors",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr7",
+              "title": "Majority Element",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr8",
+              "title": "Next Permutation",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr9",
+              "title": "Set Matrix Zeroes",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr10",
+              "title": "Rotate Image",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr11",
+              "title": "Spiral Matrix",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr12",
+              "title": "Merge Intervals",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr13",
+              "title": "Subarray Sum Equals K",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr14",
+              "title": "3Sum",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-arrays.pr15",
+              "title": "Pascal's Triangle",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-strings",
+          "order": 2,
+          "title": "Strings",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Strings (Basic and Medium)",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-strings.1",
+              "title": "How strings work (immutability, string pool)",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-strings.2",
+              "title": "StringBuilder and StringBuffer",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-strings.3",
+              "title": "Basic problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-strings.4",
+              "title": "Medium problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-strings.pr1",
+              "title": "Valid Palindrome",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-strings.pr2",
+              "title": "Reverse Words in a String",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-strings.pr3",
+              "title": "Longest Common Prefix",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-strings.pr4",
+              "title": "Valid Anagram",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-strings.pr5",
+              "title": "Roman to Integer",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-strings.pr6",
+              "title": "String to Integer (atoi)",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-hashing",
+          "order": 3,
+          "title": "Hashing",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Hashing",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-hashing.1",
+              "title": "Basic hashing and frequency counting",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-hashing.2",
+              "title": "Frequency maps",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-hashing.3",
+              "title": "HashMap internals",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-hashing.pr1",
+              "title": "Group Anagrams",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-hashing.pr2",
+              "title": "Contains Duplicate",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-hashing.pr3",
+              "title": "Longest Consecutive Sequence",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-hashing.pr4",
+              "title": "Top K Frequent Elements",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-searching-and-binary-search",
+          "order": 4,
+          "title": "Searching and binary search",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Binary Search",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-searching-and-binary-search.1",
+              "title": "Linear search",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-searching-and-binary-search.2",
+              "title": "Binary search",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-searching-and-binary-search.3",
+              "title": "Modified binary search",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-searching-and-binary-search.4",
+              "title": "Binary search on 2D arrays",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-searching-and-binary-search.5",
+              "title": "Binary search on the answer",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-searching-and-binary-search.pr1",
+              "title": "Binary Search",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-searching-and-binary-search.pr2",
+              "title": "Search in Rotated Sorted Array",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-searching-and-binary-search.pr3",
+              "title": "Find Peak Element",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-searching-and-binary-search.pr4",
+              "title": "Koko Eating Bananas",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-searching-and-binary-search.pr5",
+              "title": "Median of Two Sorted Arrays",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-searching-and-binary-search.pr6",
+              "title": "Search a 2D Matrix",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-sorting",
+          "order": 5,
+          "title": "Sorting",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Sorting",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-sorting.1",
+              "title": "Selection sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.2",
+              "title": "Bubble sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.3",
+              "title": "Insertion sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.4",
+              "title": "Merge sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.5",
+              "title": "Quick sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.6",
+              "title": "Cyclic sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.7",
+              "title": "Counting sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.8",
+              "title": "Radix sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-sorting.9",
+              "title": "Heap sort",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-sorting.pr1",
+              "title": "Sort an Array",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-sorting.pr2",
+              "title": "Find the Duplicate Number",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-sorting.pr3",
+              "title": "Missing Number",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-sorting.pr4",
+              "title": "Kth Largest Element",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-recursion",
+          "order": 6,
+          "title": "Recursion",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Recursion",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-recursion.1",
+              "title": "Call stack",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.2",
+              "title": "Tree of calls",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.3",
+              "title": "Tail recursion",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.4",
+              "title": "Subsets and subsequences",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.5",
+              "title": "String problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.6",
+              "title": "Array problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-recursion.7",
+              "title": "Pattern problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-recursion.pr1",
+              "title": "Subsets",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-recursion.pr2",
+              "title": "Combination Sum",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-recursion.pr3",
+              "title": "Permutations",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-recursion.pr4",
+              "title": "Generate Parentheses",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-backtracking",
+          "order": 7,
+          "title": "Backtracking",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Recursion",
+          "note": "Striver files backtracking inside the Recursion section.",
+          "subtopics": [
+            {
+              "id": "p2-backtracking.1",
+              "title": "N-Queens",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-backtracking.2",
+              "title": "N-Knights",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-backtracking.3",
+              "title": "Sudoku solver",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-backtracking.4",
+              "title": "Maze problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-backtracking.pr1",
+              "title": "N-Queens",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-backtracking.pr2",
+              "title": "Sudoku Solver",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-backtracking.pr3",
+              "title": "Word Search",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-backtracking.pr4",
+              "title": "Rat in a Maze",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-two-pointers-and-sliding-window",
+          "order": 8,
+          "title": "Two pointers and sliding window",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Sliding Window / 2 Pointer",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-two-pointers-and-sliding-window.1",
+              "title": "Two pointers",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-two-pointers-and-sliding-window.2",
+              "title": "Fixed-size sliding window",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-two-pointers-and-sliding-window.3",
+              "title": "Variable-size sliding window",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-two-pointers-and-sliding-window.pr1",
+              "title": "Longest Substring Without Repeating Characters",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-two-pointers-and-sliding-window.pr2",
+              "title": "Container With Most Water",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-two-pointers-and-sliding-window.pr3",
+              "title": "Minimum Window Substring",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-two-pointers-and-sliding-window.pr4",
+              "title": "Max Consecutive Ones III",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-greedy-algorithms",
+          "order": 9,
+          "title": "Greedy algorithms",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Greedy Algorithms",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-greedy-algorithms.1",
+              "title": "Greedy choice and proof sketches",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-greedy-algorithms.2",
+              "title": "Scheduling and intervals",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p2-greedy-algorithms.3",
+              "title": "Classic greedy problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-greedy-algorithms.pr1",
+              "title": "Assign Cookies",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-greedy-algorithms.pr2",
+              "title": "Jump Game",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-greedy-algorithms.pr3",
+              "title": "Non-overlapping Intervals",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-greedy-algorithms.pr4",
+              "title": "Gas Station",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-greedy-algorithms.pr5",
+              "title": "Activity Selection",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p2-divide-and-conquer",
+          "order": 10,
+          "title": "Divide and conquer",
+          "sources": [
+            "+"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p2-divide-and-conquer.1",
+              "title": "Divide-and-conquer pattern",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p2-divide-and-conquer.2",
+              "title": "Merge-sort style problems",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p2-divide-and-conquer.3",
+              "title": "Master theorem in practice",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p2-divide-and-conquer.pr1",
+              "title": "Count of Smaller Numbers After Self",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p2-divide-and-conquer.pr2",
+              "title": "Maximum Subarray (D&C version)",
+              "verified": false,
+              "link": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p3",
+      "order": 3,
+      "title": "Linked structures and trees",
+      "description": "Pointer-based structures, then trees, heaps, tries and range-query structures.",
+      "topics": [
+        {
+          "id": "p3-linked-list",
+          "order": 1,
+          "title": "Linked list",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Linked-List",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-linked-list.1",
+              "title": "Singly linked list",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.2",
+              "title": "Doubly linked list",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.3",
+              "title": "Circular linked list",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.4",
+              "title": "Fast and slow pointers",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.5",
+              "title": "Cycle detection",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.6",
+              "title": "Reversal",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-linked-list.7",
+              "title": "Recursion on linked lists",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-linked-list.pr1",
+              "title": "Reverse Linked List",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr2",
+              "title": "Linked List Cycle",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr3",
+              "title": "Middle of the Linked List",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr4",
+              "title": "Merge Two Sorted Lists",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr5",
+              "title": "Remove Nth Node From End",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr6",
+              "title": "Palindrome Linked List",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr7",
+              "title": "LRU Cache",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-linked-list.pr8",
+              "title": "Copy List with Random Pointer",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-stacks",
+          "order": 2,
+          "title": "Stacks",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Stack / Queues",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-stacks.1",
+              "title": "Stack: efficient push and pop",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-stacks.2",
+              "title": "Monotonic stack",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-stacks.pr1",
+              "title": "Valid Parentheses",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-stacks.pr2",
+              "title": "Min Stack",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-stacks.pr3",
+              "title": "Next Greater Element",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-stacks.pr4",
+              "title": "Largest Rectangle in Histogram",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-stacks.pr5",
+              "title": "Daily Temperatures",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-queues",
+          "order": 3,
+          "title": "Queues",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Stack / Queues",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-queues.1",
+              "title": "Queue using stacks and the reverse",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-queues.2",
+              "title": "Circular queue",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-queues.3",
+              "title": "Deque",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-queues.4",
+              "title": "Monotonic deque",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-queues.pr1",
+              "title": "Implement Queue using Stacks",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-queues.pr2",
+              "title": "Sliding Window Maximum",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-queues.pr3",
+              "title": "Design Circular Queue",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-binary-trees",
+          "order": 4,
+          "title": "Binary trees",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Binary Trees",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-binary-trees.1",
+              "title": "Traversals: inorder, preorder, postorder",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-binary-trees.2",
+              "title": "BFS (level order)",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-binary-trees.3",
+              "title": "DFS",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-binary-trees.4",
+              "title": "Interview questions",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-binary-trees.pr1",
+              "title": "Maximum Depth of Binary Tree",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-trees.pr2",
+              "title": "Diameter of Binary Tree",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-trees.pr3",
+              "title": "Lowest Common Ancestor",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-trees.pr4",
+              "title": "Binary Tree Level Order Traversal",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-trees.pr5",
+              "title": "Serialize and Deserialize Binary Tree",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-binary-search-trees",
+          "order": 5,
+          "title": "Binary search trees",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Binary Search Trees",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-binary-search-trees.1",
+              "title": "BST basics: search, insert, delete",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-binary-search-trees.2",
+              "title": "BST interview problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-binary-search-trees.pr1",
+              "title": "Validate Binary Search Tree",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-search-trees.pr2",
+              "title": "Kth Smallest Element in a BST",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-binary-search-trees.pr3",
+              "title": "Lowest Common Ancestor of a BST",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-avl-trees",
+          "order": 6,
+          "title": "AVL trees",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-avl-trees.1",
+              "title": "Balance factor",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p3-avl-trees.2",
+              "title": "Rotations",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p3-heaps-and-priority-queue",
+          "order": 7,
+          "title": "Heaps and priority queue",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Heaps",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-heaps-and-priority-queue.1",
+              "title": "Priority queue",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.2",
+              "title": "Heap sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.3",
+              "title": "Two heaps",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.4",
+              "title": "K-way merge",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.5",
+              "title": "Top-K problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.6",
+              "title": "Interval problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-heaps-and-priority-queue.pr1",
+              "title": "Kth Largest Element in an Array",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.pr2",
+              "title": "Merge k Sorted Lists",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.pr3",
+              "title": "Find Median from Data Stream",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.pr4",
+              "title": "Top K Frequent Elements",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-heaps-and-priority-queue.pr5",
+              "title": "Task Scheduler",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-tries",
+          "order": 8,
+          "title": "Tries",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Tries",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-tries.1",
+              "title": "Trie basics",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-tries.2",
+              "title": "Insert, search, prefix search",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p3-tries.3",
+              "title": "Trie problems",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-tries.pr1",
+              "title": "Implement Trie",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-tries.pr2",
+              "title": "Word Search II",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-tries.pr3",
+              "title": "Maximum XOR of Two Numbers in an Array",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p3-segment-tree-and-fenwick-tree-bit",
+          "order": 9,
+          "title": "Segment tree and Fenwick tree (BIT)",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-segment-tree-and-fenwick-tree-bit.1",
+              "title": "Segment tree: build and query",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p3-segment-tree-and-fenwick-tree-bit.2",
+              "title": "Segment tree: updates and lazy propagation",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p3-segment-tree-and-fenwick-tree-bit.3",
+              "title": "Fenwick tree (BIT)",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p3-disjoint-set-union",
+          "order": 10,
+          "title": "Disjoint Set Union",
+          "sources": [
+            "+"
+          ],
+          "expanded": true,
+          "striverSection": "Graphs",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p3-disjoint-set-union.1",
+              "title": "Union by rank and path compression",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p3-disjoint-set-union.2",
+              "title": "DSU applications",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p3-disjoint-set-union.pr1",
+              "title": "Number of Provinces",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p3-disjoint-set-union.pr2",
+              "title": "Redundant Connection",
+              "verified": false,
+              "link": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p4",
+      "order": 4,
+      "title": "Graphs and dynamic programming",
+      "description": "The two big interview topics: graph traversal/shortest paths, and DP.",
+      "topics": [
+        {
+          "id": "p4-graphs",
+          "order": 1,
+          "title": "Graphs",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Graphs",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p4-graphs.1",
+              "title": "Representation: adjacency list and matrix",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.2",
+              "title": "BFS",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.3",
+              "title": "DFS",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.4",
+              "title": "Connected components",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.5",
+              "title": "Topological sort",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.6",
+              "title": "Dijkstra",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.7",
+              "title": "Bellman-Ford",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.8",
+              "title": "A* search",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p4-graphs.9",
+              "title": "MST: Prim",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.10",
+              "title": "MST: Kruskal",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.11",
+              "title": "Floyd-Warshall",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.12",
+              "title": "Cycle detection",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.13",
+              "title": "Bipartite check",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.14",
+              "title": "Strongly connected components",
+              "sources": [
+                "S"
+              ]
+            },
+            {
+              "id": "p4-graphs.15",
+              "title": "Bridges and articulation points",
+              "sources": [
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p4-graphs.pr1",
+              "title": "Number of Islands",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr2",
+              "title": "Course Schedule",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr3",
+              "title": "Rotting Oranges",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr4",
+              "title": "Clone Graph",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr5",
+              "title": "Network Delay Time",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr6",
+              "title": "Word Ladder",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr7",
+              "title": "Is Graph Bipartite?",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-graphs.pr8",
+              "title": "Min Cost to Connect All Points",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p4-dynamic-programming",
+          "order": 2,
+          "title": "Dynamic programming",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Dynamic Programming",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p4-dynamic-programming.1",
+              "title": "Recursion to memoization",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.2",
+              "title": "Tabulation",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.3",
+              "title": "Space optimisation",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.4",
+              "title": "1D DP",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.5",
+              "title": "2D DP and grids",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.6",
+              "title": "0/1 knapsack",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.7",
+              "title": "Unbounded knapsack",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.8",
+              "title": "Subsets and partition",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.9",
+              "title": "Subsequences",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.10",
+              "title": "String DP",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.11",
+              "title": "LIS",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.12",
+              "title": "LCS",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.13",
+              "title": "DP on trees",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.14",
+              "title": "Bitmask DP",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p4-dynamic-programming.15",
+              "title": "Stocks",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p4-dynamic-programming.pr1",
+              "title": "Climbing Stairs",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr2",
+              "title": "House Robber",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr3",
+              "title": "Coin Change",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr4",
+              "title": "Longest Increasing Subsequence",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr5",
+              "title": "Longest Common Subsequence",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr6",
+              "title": "Edit Distance",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr7",
+              "title": "Partition Equal Subset Sum",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr8",
+              "title": "Unique Paths",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p4-dynamic-programming.pr9",
+              "title": "Best Time to Buy and Sell Stock III",
+              "verified": false,
+              "link": null
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "p5",
+      "order": 5,
+      "title": "Advanced and optional",
+      "description": "Only after the first five phases feel solid.",
+      "topics": [
+        {
+          "id": "p5-string-algorithms",
+          "order": 1,
+          "title": "String algorithms",
+          "sources": [
+            "K",
+            "S"
+          ],
+          "expanded": false,
+          "striverSection": "Strings (Advanced Algo)",
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p5-string-algorithms.1",
+              "title": "KMP",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p5-string-algorithms.2",
+              "title": "Z-function",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p5-string-algorithms.3",
+              "title": "Rabin-Karp",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p5-string-algorithms.4",
+              "title": "Manacher",
+              "sources": [
+                "K",
+                "S"
+              ]
+            },
+            {
+              "id": "p5-string-algorithms.5",
+              "title": "Huffman coding",
+              "sources": [
+                "K",
+                "S"
+              ]
+            }
+          ],
+          "practice": [
+            {
+              "id": "p5-string-algorithms.pr1",
+              "title": "Find the Index of the First Occurrence in a String",
+              "verified": false,
+              "link": null
+            },
+            {
+              "id": "p5-string-algorithms.pr2",
+              "title": "Longest Palindromic Substring",
+              "verified": false,
+              "link": null
+            }
+          ]
+        },
+        {
+          "id": "p5-hashing-extras",
+          "order": 2,
+          "title": "Hashing extras",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p5-hashing-extras.1",
+              "title": "Chaining",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-hashing-extras.2",
+              "title": "Probing",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-hashing-extras.3",
+              "title": "Map using a linked list",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p5-number-theory-extras",
+          "order": 3,
+          "title": "Number theory extras",
+          "sources": [
+            "K"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p5-number-theory-extras.1",
+              "title": "Extended Euclid",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.2",
+              "title": "Modular inverse",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.3",
+              "title": "Diophantine equations",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.4",
+              "title": "Matrix exponentiation",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.5",
+              "title": "Catalan numbers",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.6",
+              "title": "Fermat, Wilson, Euler and Lucas theorems",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.7",
+              "title": "Chinese Remainder Theorem",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-number-theory-extras.8",
+              "title": "Euler's totient",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p5-range-query-and-offline-techniques",
+          "order": 4,
+          "title": "Range-query and offline techniques",
+          "sources": [
+            "K",
+            "+"
+          ],
+          "expanded": false,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p5-range-query-and-offline-techniques.1",
+              "title": "Square root decomposition",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-range-query-and-offline-techniques.2",
+              "title": "Sparse table",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p5-range-query-and-offline-techniques.3",
+              "title": "Mo's algorithm",
+              "sources": [
+                "+"
+              ]
+            },
+            {
+              "id": "p5-range-query-and-offline-techniques.4",
+              "title": "Intervals and sweep line",
+              "sources": [
+                "+"
+              ]
+            }
+          ],
+          "practice": []
+        },
+        {
+          "id": "p5-multithreading",
+          "order": 5,
+          "title": "Multithreading",
+          "sources": [
+            "K"
+          ],
+          "expanded": true,
+          "striverSection": null,
+          "note": null,
+          "subtopics": [
+            {
+              "id": "p5-multithreading.1",
+              "title": "Threads in Java",
+              "sources": [
+                "K"
+              ]
+            },
+            {
+              "id": "p5-multithreading.2",
+              "title": "Synchronisation basics",
+              "sources": [
+                "K"
+              ]
+            }
+          ],
+          "practice": []
+        }
+      ]
+    }
+  ]
+}

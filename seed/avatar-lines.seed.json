@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "note": "Spoken/shown lines for the coach avatar. {name} = user's first name. Keep each under 140 chars so speech takes under ~8 seconds. Original text. Tone: warm, gentle, never guilt-tripping.",
+  "morning": [
+    "Good morning, {name}. A gentle nudge: one problem before the day gets loud?",
+    "Morning, {name}! Your sheet is ready whenever you are. Just one row to begin.",
+    "Hi {name}, it's 8:30. Chai in hand, editor open, ten quiet minutes. Shall we?",
+    "Good morning! Today's plan is small and doable. Let's get your first green square.",
+    "Rise and solve, {name}. I saved your place in the sheet."
+  ],
+  "study": [
+    "Hey {name}, it's study time. Your next topic is waiting. Ready to begin?",
+    "Time for your DSA session, {name}. Start with a revision card, then one new problem.",
+    "Knock knock. Your streak and I would love to see you in the editor.",
+    "{name}, twenty minutes is enough to keep the streak alive. Let's go.",
+    "Session time. Open the sheet and I'll keep you company."
+  ],
+  "nudge_missed": [
+    "No pressure, {name}. One easy problem keeps the momentum. Want to try one?",
+    "Still here for you. Even a ten-minute revision counts today.",
+    "Quick check-in: the day isn't over. One subtopic still counts."
+  ],
+  "snooze_ack": [
+    "Okay, I'll check back in a bit.",
+    "Snoozed. I'll be back soon, {name}."
+  ],
+  "start_ack": [
+    "Lovely. Let's do this.",
+    "That's the spirit, {name}. Opening your sheet."
+  ],
+  "done_today": [
+    "Today's goal is done, {name}. Beautiful consistency. Rest well.",
+    "Green square earned. See you tomorrow morning."
+  ],
+  "weekly_review": [
+    "It's review time, {name}. Let's look at your week together.",
+    "Sunday check-in: a few minutes to look back and plan ahead."
+  ]
+}
