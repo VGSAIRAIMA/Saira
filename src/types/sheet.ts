@@ -87,3 +87,20 @@ export interface Settings {
   activeThresholdMinutes?: number;
   voice?: boolean;
 }
+
+export interface CustomItem {
+  id: string;
+  kind: 'subtopic' | 'practice';
+  topicId: string;
+  phaseId: string;
+  title: string;
+  order: number;
+  sources?: SourceTag[];
+  links?: {
+    video?: string;
+    article?: string;
+    practice?: string;
+  };
+  createdAt: number;
+}
+

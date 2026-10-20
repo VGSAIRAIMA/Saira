@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:rules": "firebase emulators:exec --only firestore \"vitest run src/lib/__tests__/firestore-rules.test.ts\"",
     "format": "prettier --write ."
   },
   "dependencies": {
@@ -16,6 +17,8 @@
     "clsx": "^2.1.1",
     "date-fns": "^4.4.0",
     "date-fns-tz": "^3.2.0",
+    "firebase": "^13.0.0",
+    "idb-keyval": "^6.3.0",
     "lucide-react": "^1.59.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
@@ -26,6 +29,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@firebase/rules-unit-testing": "^6.0.0",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.6.5",
     "@types/react": "^19.3.0",

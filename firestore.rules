@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
+
+    match /users/{uid} {
+      allow read, write: if isOwner(uid);
+    }
+
+    match /users/{uid}/progress/{itemId} {
+      allow read, delete: if isOwner(uid);
+      allow create, update: if isOwner(uid)
+        && request.resource.data.status in ['not_started', 'in_progress', 'done', 'needs_revision']
+        && (!('notes' in request.resource.data) || request.resource.data.notes == null || (request.resource.data.notes is string && request.resource.data.notes.size() <= 20000))
+        && (!('keyIdea' in request.resource.data) || request.resource.data.keyIdea == null || (request.resource.data.keyIdea is string && request.resource.data.keyIdea.size() <= 500))
+        && (!('mistakes' in request.resource.data) || request.resource.data.mistakes == null || (request.resource.data.mistakes is string && request.resource.data.mistakes.size() <= 2000));
+    }
+
+    match /users/{uid}/custom/{id}    { allow read, write: if isOwner(uid); }
+    match /users/{uid}/days/{day}     { allow read, write: if isOwner(uid); }
+    match /users/{uid}/weeks/{week}   { allow read, write: if isOwner(uid); }
+    match /users/{uid}/favorites/{id} { allow read, write: if isOwner(uid); }
+    match /users/{uid}/meta/{doc}     { allow read, write: if isOwner(uid); }
+    match /users/{uid}/devices/{id}   { allow read, write: if isOwner(uid); }
+
+    match /{document=**} { allow read, write: if false; }
+  }
+}

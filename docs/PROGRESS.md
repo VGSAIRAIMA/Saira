@@ -65,16 +65,64 @@ This document tracks progress through the milestones outlined in `docs/09-build-
 
 ---
 
-## Next Up: Milestone 2 — The Sheet with Real Persistence
+## Milestone 2: The Sheet with Persistence & Firebase Cloud Sync — [COMPLETED]
 
-### Plan for Milestone 2
-1. Local-first storage integration (`idb-keyval` store for progress, custom items, notes, day logs).
-2. Interactive Sheet UI per `docs/05-sheet-spec.md`:
-   - Left phase rail with interactive progress rings.
-   - Topic accordions with `[K]`, `[S]`, `[+]` chips, candidate badges, and progress bars.
-   - Rows with checkboxes, confidence dots, bookmark stars, link icons, and notes indicator.
-   - Right-side item detail drawer (notes editor, mistakes log, minutes counter, revision date).
-   - Search modal (Ctrl/Cmd-K), status and tag filters.
-   - Keyboard navigation (`j/k`, `x`, `Enter`, `n`, `b`).
-   - Batched writes to `DayLog` on every item completion toggle.
-3. Pass all 7 sheet acceptance criteria from `docs/05-sheet-spec.md §9`.
+### Completed Tasks (Local Half)
+- [x] Local-first storage integrated using `idb-keyval` (IndexedDB):
+  - Stores `ItemProgress`, `CustomItem[]`, `DayLog` map, and `hiddenIds` set.
+  - Environment-safe fallback with in-memory store ensuring 100% test reliability.
+- [x] Atomic DayLog writes on item tick:
+  - Toggling status to `done` atomically sets item completion, timestamps, initial revision due date, and increments today's `DayLog.completed += 1` in a single persistent write.
+  - Unticking on the same day decrements `DayLog.completed` without losing notes or confidence ratings.
+- [x] 6-second floating undo toast with one-click restore.
+- [x] Full interactive Sheet UI per `docs/05-sheet-spec.md`:
+  - Desktop sticky left rail with overall progress ring and 6 phase cards with accent left borders and progress bars.
+  - Phase header with description, large progress ring, "Continue" button, and count-mode toggle (`all` / `subtopics_only` / `practice_only`).
+  - Topic accordions with `[K]`, `[S]`, `[+]` source tags, Striver section badge, note hint line, progress bar, Learn checklist, Practice candidates, and "Mark all learn items done".
+  - High-density item rows with checkbox, candidate badges for unverified practice, confidence 5-dots, bookmark star, link badges (video, article, practice), and revision due pill.
+  - Detail drawer (right slide-over) with title overlay editing, 4-status selector, 1-5 confidence rating, key idea input, mistakes textarea, markdown notes editor (up to 20k chars), URL links with `https://` validation, study timer with minutes counter, attempts tracker, bookmark star, and item hide/unhide.
+  - Global search modal (Ctrl/Cmd-K or `/`) across titles, notes, and key ideas, grouped by phase.
+  - Full keyboard navigation: `j`/`k` to move, `x` to toggle done, `Enter` to open drawer, `n` to view notes, `b` to bookmark, `/` or `Ctrl+K` to search, `g t` for Today, `g s` for Sheet, `Escape` to close.
+  - Custom items modal allowing user to add subtopics or practice items to any topic.
+  - Hidden items modal with one-click unhide.
+  - Export and import JSON backup functionality.
+
+### Completed Tasks (Firebase Cloud Sync Half)
+- [x] Installed `firebase` SDK (v13.0.0). Configured strictly via Vite environment variables (`VITE_FIREBASE_*`).
+- [x] `.env.example` created with all configuration placeholders. `.env` is ignored by `.gitignore` and never committed.
+- [x] Implemented `src/lib/firebase.ts` with offline persistence enabled via `persistentLocalCache({ tabManager: persistentMultipleTabManager() })`. Safe initialization handles missing credentials gracefully.
+- [x] Google Authentication built with Firebase Auth (`useAuthStore.ts`) providing `signInWithGoogle` and `signOutUser`.
+- [x] Built bidirectional, non-destructive first-signin merge algorithm in `src/lib/sync.ts`:
+  - **Progress**: Newer `updatedAt` / `lastTouchedAt` timestamp wins on collision. Local-only items upload to Firestore; cloud-only items download to IndexedDB.
+  - **DayLogs**: Non-destructive union. `completed`, `revised`, and `minutes` are max-merged (`Math.max(local, cloud)`). `restDay` is OR-merged. Effort is never decreased.
+  - **Custom items**: Union by `id`.
+  - **Hidden items**: Set union.
+- [x] Realtime sync: Firestore snapshot listeners automatically propagate changes across devices in real time.
+- [x] Security rules (`firestore.rules`):
+  - User documents partitioned under `users/{uid}/**` with strict `request.auth.uid == uid` ownership checks.
+  - Progress documents enforce valid status (`not_started`, `in_progress`, `done`, `needs_revision`) and payload bounds (notes $\le 20\text{k}$, keyIdea $\le 500$, mistakes $\le 2\text{k}$).
+- [x] Security rules unit tests written and verified against Firestore emulator using `@firebase/rules-unit-testing`:
+  - Owner read/write verified.
+  - Cross-user access denied.
+  - Unauthenticated access denied.
+  - Invalid status rejected.
+  - Oversized payloads rejected.
+- [x] Top bar AppShell updated with sync status indicator pill (`Synced` / `Syncing...` / `Offline` / `Local Mode`) and Google avatar popover.
+- [x] Dedicated `LoginPage.tsx` with Google sign-in button, loading state, error alerts, and reassurance on offline-first data safety.
+- [x] Verified Milestone 2 Acceptance:
+  - 64 unit tests passing in Vitest (`pnpm test`).
+  - 7 emulator security rules tests passing (`pnpm test:rules`).
+  - Zero TypeScript errors (`tsc --noEmit`).
+  - Zero ESLint errors or warnings (`eslint .`).
+  - Production build succeeds cleanly (`vite build`).
+
+---
+
+## Next Up: Milestone 3 (Today, Streaks, History, Quotes)
+
+### Plan for Next Step
+1. Build Today page (greeting, deterministic daily quote, today target ring, continue learning card, revision queue counter, 7-day strip).
+2. Build History log page and 52-week heatmap.
+3. Build Progress analytics page with phase completion bars, pace, projected finish date, weekly bars, and confidence distribution.
+
+
