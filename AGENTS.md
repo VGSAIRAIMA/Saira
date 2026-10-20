@@ -52,3 +52,6 @@ Seed data: `src/data/sheet.seed.json`, `quotes.seed.json`, `avatar-lines.seed.js
 ## Definition of done for the whole app
 
 She ticks items today, closes the browser, opens the app tomorrow on her phone, and sees the same ticks, an incremented streak, a populated history and correct percentages; the coach appears at 8:30 and 19:00 while the app is open, and push works when installed; the app deploys to Firebase Hosting and installs as a PWA.
+
+## reference
+Match the look of docs/reference/SAIRA.html. It is a visual reference only. Rebuild in React, Tailwind and shadcn/ui and do not copy its code or sample data.
