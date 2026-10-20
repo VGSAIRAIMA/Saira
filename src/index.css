@@ -1,0 +1,146 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: hsl(var(--background));
+  --color-surface: hsl(var(--surface));
+  --color-surface-2: hsl(var(--surface-2));
+  --color-foreground: hsl(var(--foreground));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-accent-pink: hsl(var(--accent-pink));
+  --color-success: hsl(var(--success));
+  --color-warning: hsl(var(--warning));
+  --color-danger: hsl(var(--danger));
+
+  --color-ph-0: hsl(var(--ph0));
+  --color-ph-1: hsl(var(--ph1));
+  --color-ph-2: hsl(var(--ph2));
+  --color-ph-3: hsl(var(--ph3));
+  --color-ph-4: hsl(var(--ph4));
+  --color-ph-5: hsl(var(--ph5));
+
+  --font-display: var(--font-display);
+  --font-body: var(--font-body);
+  --font-mono: var(--font-mono);
+}
+
+:root {
+  --background: 240 5% 8%;          /* #131315 */
+  --surface: 240 5% 11%;            /* cards */
+  --surface-2: 240 5% 14%;          /* raised / hover */
+  --foreground: 0 0% 96%;
+  --muted-foreground: 240 5% 66%;
+  --border: 240 4% 20%;
+  --input: 240 4% 20%;
+  --ring: 270 100% 70%;
+  --primary: 270 100% 62%;          /* violet, buttons/links */
+  --primary-foreground: 0 0% 100%;
+  --accent-pink: 337 100% 59%;      /* #FF2E7E */
+  --success: 152 60% 45%;
+  --warning: 38 95% 55%;
+  --danger: 0 80% 60%;
+  --radius: 0.75rem;
+
+  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Phase accents */
+  --ph0: 199 90% 60%; /* sky */
+  --ph1: 38 95% 58%;  /* amber */
+  --ph2: 262 85% 68%; /* violet */
+  --ph3: 152 60% 48%; /* emerald */
+  --ph4: 345 85% 62%; /* rose */
+  --ph5: 186 70% 50%; /* cyan */
+
+  --brand-from: #8b3dff;
+  --brand-to: #ff2e7e;
+  --brand-gradient: linear-gradient(135deg, #8b3dff, #ff2e7e);
+}
+
+.theme-cinematic {
+  --background: 201 100% 13%;
+  --foreground: 0 0% 100%;
+  --muted-foreground: 240 4% 66%;
+  --primary: 0 0% 100%;
+  --primary-foreground: 0 0% 4%;
+  --secondary: 0 0% 10%;
+  --muted: 0 0% 10%;
+  --accent: 0 0% 10%;
+  --border: 0 0% 18%;
+  --input: 0 0% 18%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.font-mono {
+  font-family: var(--font-mono);
+}
+
+/* Liquid glass effect for landing page CTA & nav */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.01);
+  background-blend-mode: luminosity;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border: none;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.liquid-glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.4px;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.45) 0%,
+    rgba(255, 255, 255, 0.15) 20%,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0) 60%,
+    rgba(255, 255, 255, 0.15) 80%,
+    rgba(255, 255, 255, 0.45) 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-rise {
+  animation: fade-rise 0.8s ease-out both;
+}
+
+.animate-fade-rise-delay {
+  animation: fade-rise 0.8s ease-out 0.2s both;
+}
+
+.animate-fade-rise-delay-2 {
+  animation: fade-rise 0.8s ease-out 0.4s both;
+}
