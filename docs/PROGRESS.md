@@ -199,13 +199,127 @@ This document tracks progress through the milestones outlined in `docs/09-build-
 
 ---
 
-## Next Up: Milestone 5 (Reminders and the Coach)
+## Milestone 5: Reminders and the Coach — [COMPLETED]
 
-### Plan for Next Step
-1. Settings for times (08:30 and 19:00 default), days of week, voice, snooze, and quiet hours.
-2. Reminder scheduler (`src/lib/schedule.ts`) with fake-clock unit tests.
-3. Coach overlay component with avatar art (idle, talking, cheer), speech synthesis, and fallbacks.
-4. Local system notifications with `Start` and `Snooze` actions.
-5. Reminder preview button in Settings.
+### Completed Tasks
+- [x] Settings UI (`src/features/settings/SettingsPage.tsx`):
+  - Morning slot time picker (default 08:30), Evening slot time picker (default 19:00).
+  - Days-of-week toggles (Mon–Sun).
+  - Voice on/off toggle with volume slider and preview button.
+  - Snooze duration selector (5 / 10 / 15 / 30 min) and maximum snooze count (1–5).
+  - Quiet hours start/end pickers.
+  - Coach theme selector: Classic, Hero, Realm, Mahabharata, Mix (Mix picks a different theme each day).
+  - Settings persisted to IndexedDB via `useSheetStore`.
+- [x] Reminder Scheduler (`src/lib/schedule.ts`):
+  - `evaluateSchedule(now, settings, state, todayLog)` → `'fire' | 'wait' | 'skip'`.
+  - Slot fires within a 30-minute window of configured time.
+  - Snooze logic: postpones fire until snooze expiry; max snooze count enforced.
+  - "Not today" dismissal: skips the slot for the rest of the day.
+  - "Goal already met": skips if today's completed count ≥ daily target.
+  - Missed-day nudge: fires once on the evening slot if yesterday's log is empty.
+  - Two-tab deduplication via `BroadcastChannel`.
+- [x] Coach Overlay (`src/components/coach/CoachOverlay.tsx`):
+  - Portal rendered at app root with `position: fixed`, bottom-right on desktop, bottom sheet on mobile.
+  - High z-index with safe-area padding.
+  - Avatar (idle / talking / cheer) from `public/coach/`.
+  - Speech synthesis: prefers `en-IN` voice, falls back to any `en-*` female-sounding voice; rate 0.95.
+  - Lines from `src/data/avatar-lines.seed.json`, structured by theme × group.
+  - **Start**, **Snooze 15 min**, **Not today** buttons. No close (X) button in the corner.
+  - 60-second auto-dismiss; Escape key closes for accessibility.
+  - `aria-live="polite"` on coach text.
+- [x] Local Notifications: `showLocalNotification()` with `Start` and `Snooze` actions.
+- [x] Preview button in Settings triggers overlay + voice + notification.
+- [x] Scheduler hook (`src/lib/useScheduler.ts`) wired in `AppShell`.
+- [x] Weekly Review Dialog (`src/components/weekly-review/WeeklyReviewDialog.tsx`):
+  - Triggers on Sunday and on demand from Progress page.
+  - Saves review to `weeks/{weekKey}` via `src/lib/weeklyReviewStorage.ts`.
+- [x] Verified Milestone 5 Acceptance:
+  - 110 unit tests passing across 18 test suites (`pnpm test`).
+  - 17 schedule tests: slot firing, snooze max, "not today", goal met, missed-day nudge, two-tab dedup.
+  - Zero TypeScript errors (`pnpm typecheck`).
+  - Zero ESLint errors or warnings (`pnpm lint`).
+  - Production build succeeds (`pnpm build`).
 
+---
+
+## Milestone 6: Revision and Weekly Review — [COMPLETED]
+
+### Completed Tasks
+- [x] Spaced Revision Queue (`src/features/revision/RevisionPage.tsx`):
+  - Lists all items whose `dueDayKey ≤ today` sorted by due date ascending.
+  - Confidence rating input (1–5) after each revision tick.
+  - Step advances: intervals `[1, 3, 7, 21, 60]` days; step regresses on confidence ≤ 2.
+  - Honest empty state when queue is empty.
+- [x] Revision stats wired to Progress page (due count badge, phase bars include revision status).
+- [x] Weekly Review Dialog (`src/components/weekly-review/WeeklyReviewDialog.tsx`):
+  - Opens automatically on Sunday (first visit of the week).
+  - On-demand trigger from Progress page.
+  - Saves `WeeklyReview` record to `src/lib/weeklyReviewStorage.ts` (IndexedDB key `weeks/{weekKey}`).
+  - Sync rules unchanged (uses existing `users/{uid}/weeks/` path).
+- [x] Weekly Review History (`src/features/history/WeeklyReviewsHistory.tsx`):
+  - Listed chronologically in Progress → History tab.
+- [x] Revision unit tests (`src/lib/stats/__tests__/revision.test.ts`):
+  - Due dates at correct intervals for all 5 steps.
+  - Month rollover and year rollover correctness.
+  - Step regression on low confidence.
+  - Initial revision state creation.
+- [x] Firestore rules test added covering `weeks/` write path.
+- [x] Verified Milestone 6 Acceptance:
+  - 110 unit tests passing.
+  - Due dates unit-tested for all steps and edge cases.
+  - Weekly review saves and appears in history.
+  - `pnpm lint`, `pnpm typecheck`, `pnpm test`, `pnpm build` all green.
+
+---
+
+## Milestone 7: Landing and Login (Cinematic) — [COMPLETED]
+
+### Completed Tasks
+- [x] `src/components/HeroVideo.tsx`:
+  - Reads source from `VITE_LANDING_VIDEO_URL` (never hard-coded).
+  - `<video>` with `loop muted playsInline preload="metadata"`.
+  - `play()` called inside `useEffect` with `.catch()` — blocked autoplay never throws.
+  - Poster `/video/hero-poster.jpg` as fallback; pure navy gradient fallback when no URL configured.
+  - `prefers-reduced-motion: reduce` → video does NOT autoplay; poster visible only.
+  - Only mounted on Landing and Login pages — **never on dashboard routes**.
+- [x] `src/components/GlassNav.tsx`:
+  - Logo (SAIRA mark + wordmark), desktop nav links (Home, Sheet, Progress, Reminders).
+  - "Start today" CTA using `.liquid-glass rounded-full`, `hover:scale-[1.03]`.
+  - Nav links hidden on mobile (`md:flex`).
+- [x] `src/features/landing/LandingPage.tsx` (full rewrite):
+  - `<div class="theme-cinematic">` wrapper — dashboard theme untouched.
+  - Subtle `bg-black/20` scrim over video for text contrast.
+  - H1 in Instrument Serif `text-5xl sm:text-7xl md:text-8xl leading-[0.95] tracking-[-2.46px]` with `animate-fade-rise`.
+  - "dreams" and "through the daily reps." wrapped in `<em class="not-italic text-muted-foreground">`.
+  - Subtext with `animate-fade-rise-delay`.
+  - "Continue with Google" CTA → real Firebase Google sign-in → redirects to `/today` on success.
+  - Inline error banner with dismiss.
+  - Footer: "SAIRA · Since 2026 · Built for Raima".
+- [x] `src/features/auth/LoginPage.tsx` (full rewrite):
+  - Same HeroVideo + GlassNav + theme-cinematic wrapper.
+  - Centred glass card (`liquid-glass rounded-3xl`) with SAIRA mark, tagline, sign-in button.
+  - Signed-in state: user card + "Continue to Today" button + Sign out link.
+  - Clear error banner on failure or cancellation.
+  - "Use offline mode" link → `/today`.
+- [x] `src/index.css`: `@media (prefers-reduced-motion: reduce)` block disables all three fade-rise classes.
+- [x] `firebase.json` CSP header: `media-src 'self' https://d8j0ntlcm91z4.cloudfront.net` allows the temporary CloudFront video; `font-src` allows `fonts.gstatic.com`; `connect-src` allows Firebase APIs; `frame-src 'none'`.
+- [x] `public/video/README.md`: instructions for placing `hero.mp4` + `hero-poster.jpg` and ffmpeg commands.
+- [x] Verified Milestone 7 Acceptance:
+  - 110 unit tests passing (`pnpm test`).
+  - Zero TypeScript errors (`pnpm typecheck`).
+  - Zero ESLint errors or warnings (`pnpm lint`).
+  - Production build succeeds (`pnpm build`, 1,622 kB JS / 83 kB CSS).
+
+### Performance note
+- Lighthouse performance on `/landing` is not budgeted (per spec). Dashboard (`/today`) budget ≥ 90 is unchanged.
+- Video is excluded from the service worker precache (`maximumFileSizeToCacheInBytes` = 5 MB cap) and is never fetched on dashboard routes.
+
+### Open items for the learner
+1. Place `hero.mp4` and `hero-poster.jpg` in `public/video/` (see `public/video/README.md`).
+2. Confirm the video's licence in `docs/DECISIONS.md`.
+3. Run `firebase deploy --only hosting` after adding the video files.
+
+---
+
+## Next Up: Milestone 8 (Background Push / FCM) or Milestone 9 (Deploy and Harden)
 
