@@ -42,8 +42,15 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   signOutUser: async () => {
     if (!auth) return;
+    // Capture UID before signing out so we can delete the device doc
+    const uid = useAuthStore.getState().user?.uid;
     set({ isLoading: true, error: null });
     try {
+      // Delete FCM token (best-effort — import is lazy so it never fails in tests)
+      if (uid) {
+        const { deleteFcmToken } = await import('@/lib/fcm');
+        await deleteFcmToken(uid);
+      }
       await firebaseSignOut(auth);
       set({ user: null, isLoading: false });
     } catch (err: unknown) {

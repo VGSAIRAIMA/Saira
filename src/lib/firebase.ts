@@ -42,3 +42,23 @@ if (isFirebaseConfigured) {
 export const auth = authInstance;
 export const db = firestoreInstance;
 export const googleProvider = new GoogleAuthProvider();
+
+/**
+ * Returns the Firebase Messaging instance lazily.
+ * Only call this from client code after the user has granted notification permission.
+ * Never call it in tests, SSR, or when Firebase is not configured.
+ *
+ * Why lazy? firebase/messaging imports are heavy and fail in Node/test environments
+ * that don't have a ServiceWorker API. A dynamic import avoids these issues.
+ */
+export async function getMessagingInstance() {
+  if (!isFirebaseConfigured) return null;
+  const { getMessaging } = await import('firebase/messaging');
+  const app = !getApps().length ? null : getApp();
+  if (!app) return null;
+  try {
+    return getMessaging(app);
+  } catch {
+    return null;
+  }
+}

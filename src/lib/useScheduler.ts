@@ -12,6 +12,7 @@ import {
   subscribeToReminderBroadcast,
 } from './reminderStorage';
 import { showLocalNotification } from './notifications';
+import { registerFcmToken } from './fcm';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { pickLine } from './coachLines';
@@ -30,6 +31,15 @@ export function useScheduler() {
   const [promptOpen, setPromptOpen] = useState(false);
 
   const checkIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // On app start: if already signed in and permission already granted, refresh the FCM token.
+  // This updates lastSeenAt and catches any token rotations done by Firebase.
+  useEffect(() => {
+    if (!user?.uid) return;
+    if (typeof window === 'undefined' || !('Notification' in window)) return;
+    if (Notification.permission !== 'granted') return;
+    void registerFcmToken(user.uid);
+  }, [user?.uid]);
 
   // Check whether to show the post-first-item notification prompt
   useEffect(() => {

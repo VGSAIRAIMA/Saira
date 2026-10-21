@@ -315,4 +315,48 @@ describe.skipIf(!isEmulatorRunning)('Firestore Security Rules (Emulator Suite)',
       })
     );
   });
+
+  it('allows owner to read and write their own device doc (FCM token)', async () => {
+    const aliceContext = testEnv.authenticatedContext('alice');
+    const deviceRef = doc(aliceContext.firestore(), 'users/alice/devices/device-abc-123');
+
+    await assertSucceeds(
+      setDoc(deviceRef, {
+        token: 'fcm-token-value-here',
+        platform: 'desktop',
+        tz: 'Asia/Kolkata',
+        createdAt: new Date().toISOString(),
+        lastSeenAt: new Date().toISOString(),
+      })
+    );
+
+    const snap = await assertSucceeds(getDoc(deviceRef));
+    expect(snap.exists()).toBe(true);
+    expect(snap.data()?.platform).toBe('desktop');
+  });
+
+  it('forbids another user from reading or writing a device doc (FCM token)', async () => {
+    await testEnv.withSecurityRulesDisabled(async (context) => {
+      await setDoc(doc(context.firestore(), 'users/alice/devices/device-abc-123'), {
+        token: 'fcm-token-value-here',
+        platform: 'desktop',
+        tz: 'Asia/Kolkata',
+        createdAt: new Date().toISOString(),
+        lastSeenAt: new Date().toISOString(),
+      });
+    });
+
+    const bobContext = testEnv.authenticatedContext('bob');
+    const bobDeviceRef = doc(bobContext.firestore(), 'users/alice/devices/device-abc-123');
+    await assertFails(getDoc(bobDeviceRef));
+    await assertFails(
+      setDoc(bobDeviceRef, {
+        token: 'evil-token',
+        platform: 'android-chrome',
+        tz: 'UTC',
+        createdAt: new Date().toISOString(),
+        lastSeenAt: new Date().toISOString(),
+      })
+    );
+  });
 });

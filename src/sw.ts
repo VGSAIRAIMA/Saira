@@ -5,8 +5,85 @@ import { registerRoute, NavigationRoute } from 'workbox-routing';
 import { StaleWhileRevalidate, CacheFirst, NetworkOnly } from 'workbox-strategies';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { CacheableResponsePlugin } from 'workbox-cacheable-response';
+import { initializeApp, getApps } from 'firebase/app';
+import { getMessaging, onBackgroundMessage } from 'firebase/messaging/sw';
 
 declare const self: ServiceWorkerGlobalScope;
+
+/**
+ * HOW THE SW GETS THE FIREBASE CONFIG (no secrets):
+ *
+ * The Firebase client config (apiKey, projectId, etc.) is a PUBLIC configuration.
+ * It's already shipped inside the main JS bundle that the browser downloads.
+ * The page posts it to the SW via postMessage after the SW activates.
+ * The SW stores it here and uses it to initialise firebase/messaging/sw.
+ * This avoids hard-coding the config in sw.ts itself (which would make it harder
+ * to change), and never involves any private keys or service accounts.
+ */
+let fcmInitialised = false;
+
+function ensureFcmInitialised(config: Record<string, string>) {
+  if (fcmInitialised) return;
+  try {
+    const app = getApps().length ? getApps()[0] : initializeApp(config);
+    const messaging = getMessaging(app);
+
+    onBackgroundMessage(messaging, async (payload) => {
+      // Only handle DATA-ONLY messages (no notification block from the server).
+      const data = payload.data ?? {};
+      const slot = data.slot || 'study';
+      const line = data.line || 'Time for your DSA session!';
+      const dayKey = data.dayKey || new Date().toISOString().slice(0, 10);
+
+      // If a window of the app is already visible and focused, post a message
+      // to the page so it shows the in-app coach overlay — no system notification.
+      const allClients = await self.clients.matchAll({ type: 'window', includeUncontrolled: false });
+      const focusedClient = allClients.find(
+        (c) => c.visibilityState === 'visible'
+      );
+
+      if (focusedClient) {
+        focusedClient.postMessage({
+          type: 'SAIRA_COACH_SHOW',
+          slot,
+          line,
+        });
+        return; // ← skip system notification when app is in front
+      }
+
+      // App is in the background or closed — show a system notification.
+      await self.registration.showNotification('SAIRA Coach', {
+        body: line,
+        icon: '/icons/icon-192.png',
+        // image: coach art — sender can include a URL in data.imageUrl
+        ...(data.imageUrl ? { image: data.imageUrl } : {}),
+        badge: '/icons/favicon-32.png',
+        tag: `saira-${slot}-${dayKey}`,
+        renotify: false,
+        data: { slot, url: data.url || `/today?coach=${slot}` },
+        actions: [
+          { action: 'start', title: 'Start' },
+          { action: 'snooze', title: 'Snooze 15m' },
+        ],
+      } as NotificationOptions & { renotify?: boolean; image?: string; actions?: { action: string; title: string }[] });
+    });
+
+    fcmInitialised = true;
+  } catch {
+    // FCM init is best-effort in the SW — never crash the whole SW
+  }
+}
+
+// Accept the Firebase config posted by the page after SW activation.
+// The page also uses this to pass the SAIRA_FCM_INIT type.
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SAIRA_FCM_INIT' && event.data.config) {
+    ensureFcmInitialised(event.data.config as Record<string, string>);
+  }
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
 
 // 1. Clean up old precaches from previous app versions
 cleanupOutdatedCaches();
@@ -93,12 +170,6 @@ const navigationRoute = new NavigationRoute(handler, {
 });
 registerRoute(navigationRoute);
 
-// 8. Update activation listener: activate new SW immediately when user clicks "Update"
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
-  }
-});
 
 // 9. Notification click listener: opens /today?coach=<slot>
 self.addEventListener('notificationclick', (event) => {

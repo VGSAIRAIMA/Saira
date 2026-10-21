@@ -11,6 +11,7 @@ import {
   CheckCircle,
   AlertCircle,
   Play,
+  Smartphone,
 } from 'lucide-react';
 import { InstallButton } from '@/components/pwa/InstallButton';
 import { CoachOverlay } from '@/components/coach/CoachOverlay';
@@ -21,6 +22,7 @@ import {
 } from '@/lib/reminderStorage';
 import { showLocalNotification } from '@/lib/notifications';
 import { pickLine } from '@/lib/coachLines';
+import { isFcmSupported } from '@/lib/fcm';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -432,7 +434,73 @@ export const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. PWA App Installation Section */}
+      {/* 3. Push Notifications (FCM) Status Card */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <Smartphone className="w-5 h-5 text-primary" />
+          <h2 className="text-lg font-semibold text-foreground">Background Push Notifications</h2>
+        </div>
+        <div className="bg-surface border border-border rounded-3xl p-5 shadow-sm">
+          {!isFcmSupported() ? (
+            // Not supported — browser lacks Push API or VAPID key not set
+            <div className="flex items-start gap-3 text-sm">
+              <AlertCircle className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-semibold text-foreground">Not supported in this browser</p>
+                <p className="text-xs text-muted-foreground">
+                  Background push requires a browser that supports the Web Push API (Chrome,
+                  Edge, Firefox, or Safari 16.4+ on iOS). Make sure the app is installed as a
+                  PWA and that <code className="font-mono text-[11px]">VITE_FIREBASE_VAPID_KEY</code> is set.
+                </p>
+              </div>
+            </div>
+          ) : notificationPermission === 'denied' ? (
+            // Blocked — user denied permission
+            <div className="flex items-start gap-3 text-sm">
+              <AlertCircle className="w-5 h-5 text-danger shrink-0 mt-0.5" />
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground">Notifications blocked</p>
+                <p className="text-xs text-muted-foreground">
+                  Your browser has blocked notifications for this site.
+                </p>
+                <p className="text-xs text-muted-foreground font-medium">
+                  To re-enable: open browser Settings → Privacy / Site settings →
+                  Notifications → find <span className="font-mono">saira-dsa.web.app</span> → change to Allow.
+                  Then reload the app.
+                </p>
+              </div>
+            </div>
+          ) : notificationPermission === 'granted' ? (
+            // Enabled — token is (or will be) registered
+            <div className="flex items-start gap-3 text-sm">
+              <CheckCircle className="w-5 h-5 text-success shrink-0 mt-0.5" />
+              <div className="space-y-1">
+                <p className="font-semibold text-foreground">Push notifications enabled</p>
+                <p className="text-xs text-muted-foreground">
+                  This device is registered to receive background push reminders at your
+                  scheduled morning and study times — even when the app is closed.
+                  The token renews automatically on each app start.
+                </p>
+              </div>
+            </div>
+          ) : (
+            // Default — not yet asked
+            <div className="flex items-start gap-3 text-sm">
+              <Bell className="w-5 h-5 text-muted-foreground shrink-0 mt-0.5" />
+              <div className="space-y-2">
+                <p className="font-semibold text-foreground">Background push not yet enabled</p>
+                <p className="text-xs text-muted-foreground">
+                  Grant notification permission (above) to register this device for
+                  background push reminders. You will be prompted automatically after
+                  completing your first item.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* 4. PWA App Installation Section */}
       <InstallButton variant="settings" />
 
       {/* Preview Coach Overlay */}

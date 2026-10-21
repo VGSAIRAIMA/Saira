@@ -1,6 +1,8 @@
 import React from 'react';
 import { Bell, Sparkles, X } from 'lucide-react';
 import { loadLocalReminderSettings, saveReminderSettings } from '@/lib/reminderStorage';
+import { registerFcmToken } from '@/lib/fcm';
+import { useAuthStore } from '@/stores/useAuthStore';
 
 interface NotificationPromptDialogProps {
   isOpen: boolean;
@@ -11,6 +13,9 @@ export const NotificationPromptDialog: React.FC<NotificationPromptDialogProps> =
   isOpen,
   onClose,
 }) => {
+  // Hooks must be called before any early return (React rules of hooks)
+  const user = useAuthStore((s) => s.user);
+
   if (!isOpen) return null;
 
   const handleEnable = async () => {
@@ -20,6 +25,10 @@ export const NotificationPromptDialog: React.FC<NotificationPromptDialogProps> =
         if (permission === 'granted') {
           const settings = loadLocalReminderSettings();
           await saveReminderSettings({ ...settings, notificationsEnabled: true });
+          // Register FCM token now that permission is granted
+          if (user?.uid) {
+            void registerFcmToken(user.uid);
+          }
         }
       }
     } catch {
