@@ -52,12 +52,15 @@ ffmpeg -i hero-original.mp4 -vf "scale=1280:-2" -an -c:v libx264 -crf 28 -preset
 ffmpeg -i hero.mp4 -frames:v 1 hero-poster.jpg
 ```
 
-## 6. Glass navigation
+## 6. Glass navigation (public, unauthenticated)
+
+The nav on `/` and `/login` is intentionally minimal — signed-out visitors
+must not see application routes they cannot access.
 
 - Container: `relative z-10 flex justify-between items-center px-8 py-6 max-w-7xl mx-auto`.
-- Logo: the SAIRA mark from `brand/` plus the wordmark. Not "Velorah".
-- Links (hidden on mobile, `md:flex`): **Home** (active, `text-foreground`), **Sheet**, **Progress**, **Reminders**. All `text-sm text-muted-foreground hover:text-foreground transition-colors`.
-- CTA: **Start today**, `liquid-glass rounded-full px-6 py-2.5 text-sm text-foreground hover:scale-[1.03]`.
+- **Left**: SAIRA mark + wordmark. Clicking goes to `/`.
+- **Right**: a single **Sign in** button using `.liquid-glass rounded-full px-6 py-2.5 text-sm text-foreground hover:scale-[1.03]`. Clicking it opens the Google sign-in popup directly.
+- **No other links** (Home, Sheet, Progress, Reminders are hidden until the user is signed in). The app navigation (top bar + bottom tab bar inside AppShell) only appears after sign-in.
 
 ## 7. Hero
 

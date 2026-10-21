@@ -14,7 +14,17 @@ cleanupOutdatedCaches();
 // 2. Precache app shell, HTML, JS, CSS, and bundled seed data injected at build time
 precacheAndRoute(self.__WB_MANIFEST);
 
-// 3. NEVER CACHE: Firebase Auth, Firestore, and Firebase Hosting internals
+// 3a. NEVER CACHE: Video files — too large to cache; must stream from network.
+// This covers /video/hero.mp4 and any CDN video override via VITE_LANDING_VIDEO_URL.
+registerRoute(
+  ({ url, request }) =>
+    url.pathname.startsWith('/video/') ||
+    request.destination === 'video' ||
+    /\.mp4$/i.test(url.pathname),
+  new NetworkOnly()
+);
+
+// 3b. NEVER CACHE: Firebase Auth, Firestore, and Firebase Hosting internals
 // Firestore manages its own offline cache (persistentMultipleTabManager).
 // Service worker caching of Firestore or Auth network calls causes stale reads and security token desync.
 registerRoute(

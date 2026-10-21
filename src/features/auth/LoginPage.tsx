@@ -10,11 +10,7 @@ import { AlertCircle, Loader2, ArrowRight, LogOut, CheckCircle2 } from 'lucide-r
  * Cinematic login page — Milestone 7.
  *
  * Reuses the same HeroVideo and GlassNav as the landing page.
- * The hero is replaced by a centred glass card with:
- *   - SAIRA mark
- *   - one-line tagline
- *   - Continue with Google button
- *   - clear error message on failure / cancellation
+ * min-h-dvh keeps the card centred on one screen at any viewport.
  */
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -30,7 +26,7 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div className="theme-cinematic relative min-h-screen overflow-hidden bg-[hsl(201_100%_13%)] text-foreground">
+    <div className="theme-cinematic relative min-h-dvh overflow-hidden bg-[hsl(201_100%_13%)] text-foreground">
       {/* ── Video layer ── */}
       <HeroVideo />
 
@@ -38,12 +34,12 @@ export const LoginPage: React.FC = () => {
       <div className="absolute inset-0 z-[1] bg-black/25 pointer-events-none" aria-hidden="true" />
 
       {/* ── Content layer ── */}
-      <div className="relative z-10 flex flex-col min-h-screen">
-        <GlassNav onCta={handleSignIn} ctaLoading={isLoading} />
+      <div className="relative z-10 flex flex-col min-h-dvh">
+        <GlassNav onSignIn={handleSignIn} signingIn={isLoading} />
 
         {/* Centred glass card */}
         <main
-          className="flex-1 flex items-center justify-center px-6 py-20"
+          className="flex-1 flex items-center justify-center px-6 py-10"
           id="login-main"
         >
           <div
@@ -147,7 +143,6 @@ export const LoginPage: React.FC = () => {
                   </>
                 ) : (
                   <>
-                    {/* Google G mark */}
                     <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                       <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
                       <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
@@ -160,7 +155,7 @@ export const LoginPage: React.FC = () => {
               </button>
             )}
 
-            {/* Local mode link — honest about what it means */}
+            {/* Offline mode link */}
             {!user && (
               <p className="mt-5 text-xs text-muted-foreground">
                 No account yet?{' '}
@@ -177,7 +172,7 @@ export const LoginPage: React.FC = () => {
           </div>
         </main>
 
-        <footer className="text-center text-xs text-muted-foreground py-6 px-6">
+        <footer className="text-center text-xs text-muted-foreground py-4 px-6">
           SAIRA · Since 2026 · Built for Raima
         </footer>
       </div>

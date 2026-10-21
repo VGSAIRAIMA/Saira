@@ -50,6 +50,9 @@ export default defineConfig({
       },
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,webp,json}'],
+        // Never precache video files — they are large and must stream from the network.
+        // Also never precache the README inside public/video/.
+        globIgnores: ['**/video/**', '**/*.mp4', '**/*.webm', '**/*.mov'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
       devOptions: {

@@ -3,71 +3,43 @@ import { Link } from 'react-router-dom';
 import { SairaBrand } from '@/components/SairaLogo';
 
 interface GlassNavProps {
-  /** Called when the "Start today" CTA is clicked */
-  onCta: () => void;
-  /** Whether the sign-in is in progress (shows a spinner or disables the button) */
-  ctaLoading?: boolean;
+  /** Called when the "Sign in" button is clicked */
+  onSignIn: () => void;
+  /** True while the sign-in popup is open */
+  signingIn?: boolean;
 }
 
 /**
- * Glass navigation bar used on the Landing and Login pages.
- * Desktop: logo + nav links + CTA button.
- * Mobile (< md): logo + CTA only (nav links hidden).
+ * Glass navigation bar for the public Landing and Login pages.
+ *
+ * Shows only:
+ *   - SAIRA logo (links to /)
+ *   - A single "Sign in" liquid-glass button
+ *
+ * No Home / Sheet / Progress / Reminders links — those are private and
+ * only visible after sign-in inside the AppShell.
  */
-export const GlassNav: React.FC<GlassNavProps> = ({ onCta, ctaLoading = false }) => {
+export const GlassNav: React.FC<GlassNavProps> = ({ onSignIn, signingIn = false }) => {
   return (
     <nav
       className="relative z-10 flex justify-between items-center px-6 md:px-8 py-6 max-w-7xl mx-auto w-full"
-      aria-label="Main navigation"
+      aria-label="Public navigation"
     >
       {/* Logo */}
       <Link to="/" aria-label="SAIRA home">
         <SairaBrand size={32} />
       </Link>
 
-      {/* Nav links — hidden on mobile */}
-      <div className="hidden md:flex items-center gap-8" role="list">
-        <Link
-          to="/"
-          className="text-sm text-foreground transition-colors"
-          role="listitem"
-          aria-current="page"
-        >
-          Home
-        </Link>
-        <Link
-          to="/sheet"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          role="listitem"
-        >
-          Sheet
-        </Link>
-        <Link
-          to="/progress"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          role="listitem"
-        >
-          Progress
-        </Link>
-        <Link
-          to="/settings"
-          className="text-sm text-muted-foreground hover:text-foreground transition-colors"
-          role="listitem"
-        >
-          Reminders
-        </Link>
-      </div>
-
-      {/* CTA */}
+      {/* Single CTA — no nav links for signed-out visitors */}
       <button
         type="button"
-        id="glass-nav-cta"
-        onClick={onCta}
-        disabled={ctaLoading}
+        id="glass-nav-sign-in"
+        onClick={onSignIn}
+        disabled={signingIn}
         className="liquid-glass rounded-full px-6 py-2.5 text-sm text-foreground hover:scale-[1.03] transition-transform disabled:opacity-60 disabled:cursor-not-allowed cursor-pointer"
-        aria-label="Start today — sign in with Google"
+        aria-label="Sign in with Google"
       >
-        {ctaLoading ? 'Signing in…' : 'Start today'}
+        {signingIn ? 'Signing in…' : 'Sign in'}
       </button>
     </nav>
   );
