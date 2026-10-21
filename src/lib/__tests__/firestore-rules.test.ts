@@ -250,4 +250,69 @@ describe.skipIf(!isEmulatorRunning)('Firestore Security Rules (Emulator Suite)',
       })
     );
   });
+
+  it('allows owner to manage weeks/{week} and denies non-owner access', async () => {
+    const aliceContext = testEnv.authenticatedContext('alice');
+    const weekDocRef = doc(aliceContext.firestore(), 'users/alice/weeks/2026-W43');
+
+    // Alice (owner) writes her weekly review
+    await assertSucceeds(
+      setDoc(weekDocRef, {
+        isoWeek: '2026-W43',
+        wentWell: 'Practiced two-pointers',
+        hard: 'DP state transitions',
+        nextGoal: 'Complete trees',
+        targetItems: 10,
+        createdAt: new Date().toISOString(),
+      })
+    );
+
+    // Alice (owner) can read her weekly review
+    const snap = await assertSucceeds(getDoc(weekDocRef));
+    expect(snap.exists()).toBe(true);
+
+    // Bob (non-owner) cannot read Alice's weekly review
+    const bobContext = testEnv.authenticatedContext('bob');
+    const bobWeekDocRef = doc(bobContext.firestore(), 'users/alice/weeks/2026-W43');
+    await assertFails(getDoc(bobWeekDocRef));
+
+    // Bob (non-owner) cannot overwrite Alice's weekly review
+    await assertFails(
+      setDoc(bobWeekDocRef, {
+        isoWeek: '2026-W43',
+        wentWell: 'Malicious overwrite',
+      })
+    );
+  });
+
+  it('allows owner to manage meta/reminderState and denies non-owner access', async () => {
+    const aliceContext = testEnv.authenticatedContext('alice');
+    const reminderStateRef = doc(aliceContext.firestore(), 'users/alice/meta/reminderState');
+
+    // Alice (owner) writes her reminder state
+    await assertSucceeds(
+      setDoc(reminderStateRef, {
+        lastFiredSlot: 'morning',
+        lastFiredDate: '2026-10-21',
+        snoozeCount: 1,
+        dismissedSlots: ['2026-10-21:morning'],
+      })
+    );
+
+    // Alice (owner) can read her reminder state
+    const snap = await assertSucceeds(getDoc(reminderStateRef));
+    expect(snap.exists()).toBe(true);
+
+    // Bob (non-owner) cannot read Alice's reminder state
+    const bobContext = testEnv.authenticatedContext('bob');
+    const bobReminderRef = doc(bobContext.firestore(), 'users/alice/meta/reminderState');
+    await assertFails(getDoc(bobReminderRef));
+
+    // Bob (non-owner) cannot write to Alice's reminder state
+    await assertFails(
+      setDoc(bobReminderRef, {
+        lastFiredSlot: 'study',
+      })
+    );
+  });
 });

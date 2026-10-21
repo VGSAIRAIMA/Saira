@@ -129,3 +129,23 @@ export interface CustomItem {
   createdAt: number;
 }
 
+export interface WeeklyReviewStats {
+  completedCount: number;
+  revisedCount: number;
+  totalMinutes: number;
+  activeDays: number;
+  bestDay: string | null;
+  confidenceTrend: number | null;
+}
+
+export interface WeeklyReview {
+  isoWeek: string; // e.g. "2026-W43"
+  wentWell: string;
+  hard: string;
+  nextGoal: string;
+  targetItems?: number;
+  stats: WeeklyReviewStats;
+  createdAt: string; // ISO date string
+  updatedAt?: string;
+}
+

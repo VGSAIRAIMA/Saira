@@ -8,6 +8,7 @@ import { WeeklyVelocityChart } from './components/WeeklyVelocityChart';
 import { ConfidenceDistribution } from './components/ConfidenceDistribution';
 import { Heatmap52 } from '@/features/history/Heatmap52';
 import { ActivityLogTable } from '@/features/history/ActivityLogTable';
+import { WeeklyReviewsHistory } from '@/features/history/WeeklyReviewsHistory';
 
 export const ProgressPage: React.FC = () => {
   const isLoaded = useSheetStore((s) => s.isLoaded);
@@ -117,6 +118,9 @@ export const ProgressPage: React.FC = () => {
         </div>
       ) : (
         <div className="space-y-8">
+          {/* Weekly Reviews Section */}
+          <WeeklyReviewsHistory />
+
           {/* 52-Week Study Heatmap */}
           <Heatmap52 />
 

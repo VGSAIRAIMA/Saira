@@ -25,6 +25,10 @@ import { UpdatePrompt } from '@/components/pwa/UpdatePrompt';
 import { useScheduler } from '@/lib/useScheduler';
 import { CoachOverlay } from '@/components/coach/CoachOverlay';
 import { NotificationPromptDialog } from '@/components/coach/NotificationPromptDialog';
+import { WeeklyReviewDialog } from '@/components/weekly-review/WeeklyReviewDialog';
+import { getDayOfWeekInTz } from '@/lib/schedule';
+import { getDayKey, getIsoWeekKey, DEFAULT_TIMEZONE } from '@/lib/time';
+import { loadLocalWeeklyReviews } from '@/lib/weeklyReviewStorage';
 
 const navItems = [
   { to: '/today', label: 'Today', icon: Calendar },
@@ -59,6 +63,30 @@ export const AppShell: React.FC = () => {
   useEffect(() => {
     initialize();
   }, [initialize]);
+
+  const [weeklyReviewOpen, setWeeklyReviewOpen] = useState(false);
+  const isLoaded = useSheetStore((s) => s.isLoaded);
+
+  // Sunday weekly review prompt: opens on Sundays if not already completed or dismissed this session
+  useEffect(() => {
+    if (!isLoaded) return;
+    const now = new Date();
+    const dayOfWeek = getDayOfWeekInTz(now, DEFAULT_TIMEZONE);
+    if (dayOfWeek === 0) {
+      const todayKey = getDayKey(now, DEFAULT_TIMEZONE);
+      const isoWeek = getIsoWeekKey(todayKey);
+      const dismissedKey = `saira:sunday_review_dismissed:${isoWeek}`;
+      if (sessionStorage.getItem(dismissedKey) !== 'true') {
+        const reviews = loadLocalWeeklyReviews();
+        if (!reviews[isoWeek]) {
+          const timer = setTimeout(() => {
+            setWeeklyReviewOpen(true);
+          }, 1500);
+          return () => clearTimeout(timer);
+        }
+      }
+    }
+  }, [isLoaded]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -320,6 +348,12 @@ export const AppShell: React.FC = () => {
       <NotificationPromptDialog
         isOpen={promptOpen}
         onClose={closePrompt}
+      />
+
+      {/* Sunday Weekly Review Dialog */}
+      <WeeklyReviewDialog
+        isOpen={weeklyReviewOpen}
+        onClose={() => setWeeklyReviewOpen(false)}
       />
     </div>
   );

@@ -7,7 +7,11 @@ import {
   DayLog,
 } from '@/types/sheet';
 import { CountMode } from '@/lib/stats/completion';
-import { createInitialRevisionState } from '@/lib/stats/revision';
+import {
+  createInitialRevisionState,
+  getNextRevisionStep,
+  calculateRevisionDueDate,
+} from '@/lib/stats/revision';
 import { getDayKey, DEFAULT_TIMEZONE } from '@/lib/time';
 import {
   loadInitialData,
@@ -87,6 +91,7 @@ export interface SheetState {
 
 
   toggleItemDone: (itemId: string, title?: string) => Promise<void>;
+  completeRevision: (itemId: string, confidence?: 1 | 2 | 3 | 4 | 5, minutesSpent?: number) => Promise<void>;
   undoLastTick: () => Promise<void>;
   dismissUndoToast: () => void;
 
@@ -508,6 +513,77 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   dismissUndoToast: () => {
     if (undoTimeoutId) clearTimeout(undoTimeoutId);
     set({ undoToast: null });
+  },
+
+  completeRevision: async (itemId: string, confidence?: 1 | 2 | 3 | 4 | 5, minutesSpent: number = 0) => {
+    const { progress, dayLogs } = get();
+    const current = progress[itemId];
+    if (!current) return;
+
+    const now = new Date();
+    const nowIso = now.toISOString();
+    const todayKey = getDayKey(now, DEFAULT_TIMEZONE);
+
+    const currentStep = current.revision?.step ?? 0;
+    const rating = confidence ?? current.confidence ?? 3;
+    const nextStep = getNextRevisionStep(currentStep, rating);
+    const nextDueDayKey = calculateRevisionDueDate(todayKey, nextStep);
+
+    const updatedItem: ItemProgress = {
+      ...current,
+      confidence: rating,
+      minutes: (current.minutes || 0) + minutesSpent,
+      lastTouchedAt: nowIso,
+      updatedAt: nowIso,
+      revision: {
+        step: nextStep,
+        dueDayKey: nextDueDayKey,
+        lastRevisedAt: nowIso,
+      },
+    };
+
+    const updatedProgress = { ...progress, [itemId]: updatedItem };
+
+    // Update DayLog: increment revised count, add minutes
+    const currentDayLog: DayLog = dayLogs[todayKey] || {
+      dayKey: todayKey,
+      completed: 0,
+      revised: 0,
+      minutes: 0,
+    };
+
+    const updatedDayLog: DayLog = {
+      ...currentDayLog,
+      revised: (currentDayLog.revised || 0) + 1,
+      minutes: (currentDayLog.minutes || 0) + minutesSpent,
+    };
+
+    const updatedDayLogs = { ...dayLogs, [todayKey]: updatedDayLog };
+
+    set({
+      progress: updatedProgress,
+      dayLogs: updatedDayLogs,
+      lastTouchedId: itemId,
+    });
+
+    await persistProgressAndDayLog(updatedProgress, updatedDayLogs, itemId);
+
+    const user = auth?.currentUser;
+    if (user && db) {
+      writeItemProgressToCloud(user.uid, itemId, updatedItem, updatedDayLog)
+        .then(() => {
+          if (get().syncStatus === 'error') {
+            set({ syncStatus: 'synced', syncError: null });
+          }
+        })
+        .catch((err) => {
+          console.error('Failed to sync revision to cloud:', err);
+          set({
+            syncStatus: 'error',
+            syncError: err instanceof Error ? err.message : String(err),
+          });
+        });
+    }
   },
 
   updateItemProgress: async (itemId: string, updates: Partial<ItemProgress>) => {
