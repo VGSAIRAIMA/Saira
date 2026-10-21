@@ -20,6 +20,8 @@ declare const self: ServiceWorkerGlobalScope;
  * This avoids hard-coding the config in sw.ts itself (which would make it harder
  * to change), and never involves any private keys or service accounts.
  */
+declare const __FIREBASE_CONFIG__: Record<string, string> | undefined;
+
 let fcmInitialised = false;
 
 function ensureFcmInitialised(config: Record<string, string>) {
@@ -74,8 +76,16 @@ function ensureFcmInitialised(config: Record<string, string>) {
   }
 }
 
-// Accept the Firebase config posted by the page after SW activation.
-// The page also uses this to pass the SAIRA_FCM_INIT type.
+// ── Startup initialization ────────────────────────────────────────────────────
+// The public Firebase config is injected at build time from VITE_ variables into
+// __FIREBASE_CONFIG__. This ensures that when the browser wakes up the service
+// worker fresh on an incoming push (with the app fully closed), the SW initializes
+// FCM immediately without waiting for an open page, postMessage, or user sign-in.
+if (typeof __FIREBASE_CONFIG__ !== 'undefined' && __FIREBASE_CONFIG__ && __FIREBASE_CONFIG__.apiKey) {
+  ensureFcmInitialised(__FIREBASE_CONFIG__);
+}
+
+// Accept the Firebase config posted by the page after SW activation (runtime fallback).
 self.addEventListener('message', (event) => {
   if (event.data?.type === 'SAIRA_FCM_INIT' && event.data.config) {
     ensureFcmInitialised(event.data.config as Record<string, string>);
