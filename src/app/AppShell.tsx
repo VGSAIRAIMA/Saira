@@ -22,6 +22,9 @@ import { calculateStreak } from '@/lib/stats/streak';
 import { InstallButton } from '@/components/pwa/InstallButton';
 import { OfflineBanner } from '@/components/pwa/OfflineBanner';
 import { UpdatePrompt } from '@/components/pwa/UpdatePrompt';
+import { useScheduler } from '@/lib/useScheduler';
+import { CoachOverlay } from '@/components/coach/CoachOverlay';
+import { NotificationPromptDialog } from '@/components/coach/NotificationPromptDialog';
 
 const navItems = [
   { to: '/today', label: 'Today', icon: Calendar },
@@ -41,6 +44,16 @@ export const AppShell: React.FC = () => {
   const { user, signOutUser } = useAuthStore();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Scheduler hook for coach reminders and notifications
+  const {
+    overlayOpen,
+    activeSlot,
+    activeCategory,
+    closeOverlay,
+    promptOpen,
+    closePrompt,
+  } = useScheduler();
 
   // Initialize store from local storage / Firestore once on app startup, whichever page opens first
   useEffect(() => {
@@ -294,6 +307,20 @@ export const AppShell: React.FC = () => {
       </nav>
       {/* PWA Update Ready Toast */}
       <UpdatePrompt />
+
+      {/* In-App Coach Reminder Overlay */}
+      <CoachOverlay
+        isOpen={overlayOpen}
+        slot={activeSlot}
+        lineCategory={activeCategory}
+        onClose={closeOverlay}
+      />
+
+      {/* Polite Notification Permission Dialog (after 1st completed item) */}
+      <NotificationPromptDialog
+        isOpen={promptOpen}
+        onClose={closePrompt}
+      />
     </div>
   );
 };

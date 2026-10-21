@@ -81,11 +81,33 @@ export interface DayLog {
   restDay?: boolean;
 }
 
+export interface ReminderSettings {
+  morningTime: string;          // e.g. "08:30"
+  studyTime: string;            // e.g. "19:00"
+  daysOfWeek: number[];         // [0, 1, 2, 3, 4, 5, 6] (0 = Sunday, 1 = Monday, ...)
+  voiceEnabled: boolean;        // default: true
+  snoozeMinutes: number;        // default: 15
+  quietHoursEnabled: boolean;   // default: false
+  quietHoursStart: string;      // default: "22:00"
+  quietHoursEnd: string;        // default: "07:00"
+  notificationsEnabled: boolean;// default: false
+}
+
+export interface ReminderState {
+  lastFiredSlot?: string;       // "morning" | "study"
+  lastFiredDate?: string;       // YYYY-MM-DD
+  snoozeCount?: number;         // 0 to 3
+  snoozeUntil?: number | null;  // timestamp ms
+  dismissedSlots?: string[];    // e.g. ["2026-10-21:morning"]
+  missedNudgeFiredForDate?: string; // YYYY-MM-DD
+}
+
 export interface Settings {
   tz: string;
   dailyTarget: number;
   activeThresholdMinutes?: number;
   voice?: boolean;
+  reminders?: ReminderSettings;
 }
 
 export interface CustomItem {

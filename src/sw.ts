@@ -89,3 +89,29 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
+
+// 9. Notification click listener: opens /today?coach=<slot>
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  const slot = event.notification.data?.slot || 'study';
+  const action = event.action;
+  const targetUrl = action === 'snooze' ? `/today?snooze=${slot}` : `/today?coach=${slot}`;
+
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+      for (const client of windowClients) {
+        if ('focus' in client && client.url.includes(self.location.origin)) {
+          client.focus();
+          if ('navigate' in client) {
+            return client.navigate(targetUrl);
+          }
+          return;
+        }
+      }
+      if (self.clients.openWindow) {
+        return self.clients.openWindow(targetUrl);
+      }
+    })
+  );
+});
