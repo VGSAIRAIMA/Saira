@@ -21,6 +21,7 @@ import {
   persistFavoriteQuotes,
   persistSettings,
   exportBackupJson,
+  exportBackupCsv,
   importBackupJson,
 } from '@/lib/storage';
 import { allPhases } from '@/lib/seed';
@@ -107,6 +108,7 @@ export interface SheetState {
   }) => Promise<void>;
 
   exportData: () => Promise<string>;
+  exportDataCsv: () => string;
   importData: (json: string) => Promise<void>;
   getContinueItemId: () => string | null;
 }
@@ -746,6 +748,11 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       hiddenIds,
       lastTouchedId,
     });
+  },
+
+  exportDataCsv: () => {
+    const { progress } = get();
+    return exportBackupCsv(progress);
   },
 
   importData: async (json: string) => {

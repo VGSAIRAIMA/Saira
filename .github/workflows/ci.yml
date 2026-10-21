@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+# Read-only permissions for the GITHUB_TOKEN; no deploy job.
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Install, typecheck, lint, test, build
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout — pinned to SHA for supply-chain safety
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+
+      # 2. Install pnpm (pinned version, no auto-install)
+      - name: Set up pnpm
+        uses: pnpm/action-setup@a7487c7e89a18df4991f7f222e4898a00d66ddda # v4.1.0
+        with:
+          version: 9
+
+      # 3. Set up Node 20 LTS
+      - name: Set up Node.js
+        uses: actions/setup-node@39370e3970a6d050c480ffad4ff0ed4d3fdee5af # v4.1.0
+        with:
+          node-version: 20
+          cache: pnpm
+
+      # 4. Install dependencies (frozen lockfile = reproducible)
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # 5. TypeScript typecheck (tsc --noEmit)
+      - name: Typecheck
+        run: pnpm typecheck
+
+      # 6. ESLint
+      - name: Lint
+        run: pnpm lint
+
+      # 7. Vitest unit tests (emulator tests are skipped — FIRESTORE_EMULATOR_HOST not set)
+      - name: Test
+        run: pnpm test
+
+      # 8. Production build — verifies the bundle compiles cleanly
+      - name: Build
+        run: pnpm build
+        env:
+          # Public Firebase config — safe in CI logs, not secrets.
+          # Leave blank: build succeeds; SW will have empty strings (fine for CI).
+          VITE_FIREBASE_API_KEY: ""
+          VITE_FIREBASE_AUTH_DOMAIN: ""
+          VITE_FIREBASE_PROJECT_ID: ""
+          VITE_FIREBASE_STORAGE_BUCKET: ""
+          VITE_FIREBASE_MESSAGING_SENDER_ID: ""
+          VITE_FIREBASE_APP_ID: ""
+          VITE_FIREBASE_VAPID_KEY: ""
+          VITE_LANDING_VIDEO_URL: ""

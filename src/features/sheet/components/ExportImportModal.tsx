@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useSheetStore } from '@/stores/useSheetStore';
-import { X, Download, Upload, CheckCircle2, AlertCircle } from 'lucide-react';
+import { X, Download, Upload, FileText, CheckCircle2, AlertCircle } from 'lucide-react';
 import { getDayKey } from '@/lib/time';
 
 interface ExportImportModalProps {
@@ -12,7 +12,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { exportData, importData } = useSheetStore();
+  const { exportData, exportDataCsv, importData } = useSheetStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(
@@ -21,7 +21,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleExport = async () => {
+  const handleExportJson = async () => {
     try {
       const json = await exportData();
       const blob = new Blob([json], { type: 'application/json' });
@@ -33,10 +33,29 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      setFeedback({ type: 'success', message: 'Backup successfully exported and downloaded!' });
+      setFeedback({ type: 'success', message: 'JSON backup downloaded successfully!' });
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       setFeedback({ type: 'error', message: `Export failed: ${msg}` });
+    }
+  };
+
+  const handleExportCsv = () => {
+    try {
+      const csv = exportDataCsv();
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `saira-progress-${getDayKey(new Date())}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      setFeedback({ type: 'success', message: 'CSV export downloaded successfully!' });
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setFeedback({ type: 'error', message: `CSV export failed: ${msg}` });
     }
   };
 
@@ -71,7 +90,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
       <div className="fixed inset-x-4 top-24 max-w-lg mx-auto bg-surface border border-border rounded-2xl z-50 shadow-2xl p-6 space-y-5 animate-fade-rise text-xs">
         <div className="flex items-center justify-between border-b border-border pb-3">
           <h2 className="text-base font-semibold text-foreground">
-            Data Backup: Export & Import
+            Data Backup: Export &amp; Import
           </h2>
           <button
             onClick={onClose}
@@ -84,6 +103,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
         <p className="text-muted-foreground leading-relaxed">
           Your progress, notes, bookmarks, and day logs are stored locally on your machine.
           Export a JSON backup to keep your study record safe or transfer it to another computer.
+          Export CSV opens the data in any spreadsheet app.
         </p>
 
         {feedback && (
@@ -103,38 +123,52 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
-          {/* Export Button */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+          {/* Export JSON Button */}
           <button
+            id="export-json-btn"
             type="button"
-            onClick={handleExport}
-            className="flex flex-col items-center justify-center p-5 rounded-2xl border border-border bg-surface-2/40 hover:bg-surface-2 hover:border-primary/50 transition-all text-center gap-2 group"
+            onClick={handleExportJson}
+            className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border bg-surface-2/40 hover:bg-surface-2 hover:border-primary/50 transition-all text-center gap-2 group"
           >
-            <Download className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+            <Download className="w-5 h-5 text-primary group-hover:scale-110 transition-transform" />
             <div>
-              <span className="font-semibold text-foreground block">
-                Export JSON Backup
+              <span className="font-semibold text-foreground block text-[11px]">
+                Export JSON
               </span>
-              <span className="text-[10px] text-muted-foreground">
-                Download all local study data
+              <span className="text-[10px] text-muted-foreground">Full backup</span>
+            </div>
+          </button>
+
+          {/* Export CSV Button */}
+          <button
+            id="export-csv-btn"
+            type="button"
+            onClick={handleExportCsv}
+            className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border bg-surface-2/40 hover:bg-surface-2 hover:border-primary/50 transition-all text-center gap-2 group"
+          >
+            <FileText className="w-5 h-5 text-accent-pink group-hover:scale-110 transition-transform" />
+            <div>
+              <span className="font-semibold text-foreground block text-[11px]">
+                Export CSV
               </span>
+              <span className="text-[10px] text-muted-foreground">For spreadsheets</span>
             </div>
           </button>
 
           {/* Import Button */}
           <button
+            id="import-json-btn"
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="flex flex-col items-center justify-center p-5 rounded-2xl border border-border bg-surface-2/40 hover:bg-surface-2 hover:border-primary/50 transition-all text-center gap-2 group"
+            className="flex flex-col items-center justify-center p-4 rounded-2xl border border-border bg-surface-2/40 hover:bg-surface-2 hover:border-primary/50 transition-all text-center gap-2 group"
           >
-            <Upload className="w-6 h-6 text-warning group-hover:scale-110 transition-transform" />
+            <Upload className="w-5 h-5 text-warning group-hover:scale-110 transition-transform" />
             <div>
-              <span className="font-semibold text-foreground block">
-                Import JSON Backup
+              <span className="font-semibold text-foreground block text-[11px]">
+                Import JSON
               </span>
-              <span className="text-[10px] text-muted-foreground">
-                Restore from previously saved file
-              </span>
+              <span className="text-[10px] text-muted-foreground">Restore backup</span>
             </div>
           </button>
 

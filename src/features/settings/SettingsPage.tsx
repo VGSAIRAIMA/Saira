@@ -26,6 +26,7 @@ import { pickLine } from '@/lib/coachLines';
 import { isFcmSupported } from '@/lib/fcm';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { DeleteAccountSection } from '@/components/settings/DeleteAccountSection';
 
 const DAYS = [
   { id: 1, label: 'Mon' },
@@ -529,6 +530,9 @@ export const SettingsPage: React.FC = () => {
 
       {/* 4. PWA App Installation Section */}
       <InstallButton variant="settings" />
+
+      {/* 5. Delete Account Section */}
+      <DeleteAccountSection />
 
       {/* Preview Coach Overlay */}
       <CoachOverlay

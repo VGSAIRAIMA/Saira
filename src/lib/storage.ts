@@ -125,6 +125,58 @@ export async function exportBackupJson(data: {
   return JSON.stringify(backup, null, 2);
 }
 
+/** Escape a CSV field: wrap in quotes and double any internal quotes. */
+function csvField(v: unknown): string {
+  const s = v == null ? '' : String(v);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+/**
+ * Export progress as a flat CSV (one row per item).
+ * Columns: itemId, status, confidence, minutes, attempts, bookmarked,
+ *          completedAt, lastTouchedAt, updatedAt, notes, keyIdea, mistakes
+ */
+export function exportBackupCsv(progress: Record<string, ItemProgress>): string {
+  const header = [
+    'itemId',
+    'status',
+    'confidence',
+    'minutes',
+    'attempts',
+    'bookmarked',
+    'completedAt',
+    'lastTouchedAt',
+    'updatedAt',
+    'notes',
+    'keyIdea',
+    'mistakes',
+  ].join(',');
+
+  const rows = Object.entries(progress).map(([id, p]) =>
+    [
+      id,
+      p.status,
+      p.confidence ?? '',
+      p.minutes ?? '',
+      p.attempts ?? '',
+      p.bookmarked ? 'true' : 'false',
+      p.completedAt ? String(p.completedAt) : '',
+      p.lastTouchedAt ? String(p.lastTouchedAt) : '',
+      p.updatedAt ? String(p.updatedAt) : '',
+      p.notes ?? '',
+      p.keyIdea ?? '',
+      p.mistakes ?? '',
+    ]
+      .map(csvField)
+      .join(',')
+  );
+
+  return [header, ...rows].join('\n');
+}
+
 export async function importBackupJson(jsonString: string): Promise<BackupData> {
   const parsed = JSON.parse(jsonString) as BackupData;
   if (!parsed || typeof parsed !== 'object') {

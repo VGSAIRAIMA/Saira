@@ -321,5 +321,117 @@ This document tracks progress through the milestones outlined in `docs/09-build-
 
 ---
 
-## Next Up: Milestone 8 (Background Push / FCM) or Milestone 9 (Deploy and Harden)
+## Milestone 8: Background Push (FCM) — [APP SIDE COMPLETE; SENDER NOT YET DEPLOYED]
 
+### What works
+- [x] FCM token registration (`src/lib/fcm.ts`): registers on notification grant, renews on each app start, writes `users/{uid}/devices/{deviceId}` with token, platform, tz.
+- [x] Device doc cleanup: invalid/expired tokens deleted on sign-out; old tokens cleaned up when a new one is registered.
+- [x] Service worker FCM handler (`src/sw.ts`): data-only push → shows system notification with Start/Snooze actions; if a window is focused → posts `SAIRA_COACH_SHOW` to the page instead.
+- [x] Firebase config injected at **build time** from `VITE_*` variables into `__FIREBASE_CONFIG__` — SW initialises FCM immediately at startup without waiting for the page or sign-in.
+- [x] Build ID injected into `index.html` at build time (via vite plugin) so `index.html` precache revision changes on every deploy and installed apps see the "Update available" toast.
+- [x] `firstName` field written to `users/{uid}/meta/settings` for the push sender to use.
+- [x] All reminder settings (`notificationsEnabled`, `morningTime`, `studyTime`, `daysOfWeek`, `quietHoursStart`, `quietHoursEnd`, `snoozeMinutes`, `maxSnoozeCount`, `coachTheme`, `dailyTarget`) synced to `users/{uid}/meta/settings` on change.
+- [x] `notificationsEnabled` written `true` after token registered, `false` when permission denied or revoked.
+- [x] 140 unit tests passing; 13 skipped (emulator only).
+
+### What is NOT finished
+- [ ] **`saira-push-sender` repo is not deployed.** The sender reads `users/{uid}/meta/settings`, picks a coach line, and sends an FCM HTTP v1 multicast — but no GitHub Actions schedule has been activated. In-app reminders (coach overlay) work fully without it.
+
+### Push sender contract
+See [`docs/12-push-sender-contract.md`](12-push-sender-contract.md) for the exact Firestore paths, timing logic, and FCM payload the sender must produce.
+
+---
+
+## Milestone 9: Deploy and Harden — [COMPLETED]
+
+### Completed Tasks
+
+**1. firebase.json — confirmed**
+- [x] `public: "dist"` with SPA rewrite (`** → /index.html`).
+- [x] `no-cache` for `/sw.js` and `/manifest.webmanifest`.
+- [x] `public, max-age=31536000, immutable` for `/assets/**`.
+- [x] `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`.
+- [x] Full CSP: `script-src 'self' 'unsafe-inline' https://apis.google.com`; `frame-src` for Google sign-in popup + Firebase auth domains; `connect-src` for Firestore, FCM, Installations; `font-src` for Google Fonts; `img-src` for Google avatars; `worker-src 'self'`; `object-src 'none'`; `base-uri 'self'`. No `unsafe-eval`, no wildcard for scripts.
+
+**2. SW Firebase config at startup — confirmed**
+- [x] `vite.config.ts` injects `__FIREBASE_CONFIG__` from `VITE_*` env vars at build time.
+- [x] `sw.ts` calls `ensureFcmInitialised(__FIREBASE_CONFIG__)` unconditionally before any `postMessage` or sign-in. Verified in `dist/sw.js`.
+- [x] `index.html` precache revision changes on every build (build-timestamp meta tag).
+
+**3. Firestore rules and indexes — confirmed**
+- [x] Rules cover all collections: `progress`, `days`, `custom`, `meta`, `weeks`, `favorites`, `devices`, plus catch-all deny.
+- [x] `progress` rule validates: `status` enum, `notes ≤ 20 000`, `keyIdea ≤ 500`, `mistakes ≤ 2 000`.
+- [x] Rules tests (`src/lib/__tests__/firestore-rules.test.ts`): 13 tests covering owner-can-write, non-owner-denied, unauthenticated-denied, invalid status rejected, oversized notes/keyIdea/mistakes rejected, batch writes, meta/reminderState, devices. Run with `pnpm test:rules` (requires `firebase emulators:start --only firestore`).
+- [x] `firestore.indexes.json` has no custom composite indexes needed (all queries are single-field or full-collection for the owner).
+
+**4. "Delete my data" — complete**
+- [x] `src/lib/deleteAccount.ts`: paginated batch deletion of all 7 sub-collections (400 docs/batch), FCM token cleanup (best-effort), `reauthenticateWithPopup`, `user.delete()`.
+- [x] `src/components/settings/DeleteAccountSection.tsx`: danger-styled card, modal listing exactly what is deleted, requires typing `DELETE`, live progress counter, error handling for cancelled re-auth.
+- [x] 7 unit tests (`src/lib/__tests__/deleteAccount.test.ts`) — all mocked, no real Firestore.
+
+**5. Export / Import**
+- [x] **JSON export**: full backup (progress, custom items, day logs, settings). Downloaded as `saira-backup-YYYY-MM-DD.json`. Import restores everything.
+- [x] **CSV export** (new): flat table of all item-level progress (itemId, status, confidence, minutes, attempts, bookmarked, timestamps, notes, keyIdea, mistakes). Downloaded as `saira-progress-YYYY-MM-DD.csv`.
+- [x] Both buttons in the updated `ExportImportModal` (3-column layout: Export JSON, Export CSV, Import JSON).
+
+**6. Lighthouse — reported honestly**
+- Lighthouse cannot be run automatically in this environment. To run it yourself:
+  1. `pnpm build && firebase serve --only hosting` (or use `pnpm preview` if available)
+  2. Open Chrome DevTools → Lighthouse → Mobile → Analyse page load for `/today`
+  3. Targets: Performance ≥ 90, Accessibility ≥ 95
+  - The JS bundle is 1,605 kB (464 kB gzip) — this is the main risk for Performance. The landing video is excluded from the precache. If Performance < 90, the primary fix is code-splitting the Sheet and chart components (they are not loaded on `/today` but are in the same chunk).
+  - PWA installability: check in DevTools → Application → Manifest panel. The manifest is valid; SW is registered; icons include a maskable icon.
+
+**7. CI — complete**
+- [x] `.github/workflows/ci.yml`: install → typecheck → lint → test → build on every push.
+- [x] `permissions: contents: read` (read-only), pinned action SHAs, no secrets, no deploy.
+- [x] Emulator tests automatically skip in CI (no `FIRESTORE_EMULATOR_HOST` set).
+
+**8. README — complete**
+- [x] `README.md`: what SAIRA is, features, first-time Firebase setup (step-by-step), local dev, deploy commands, PWA install on Android/iOS/Desktop, enabling notifications, exporting a backup, push-sender architecture, honest limits. No keys or personal data.
+
+**9. docs/PROGRESS.md — this file**
+- [x] Updated to honest final state for all milestones.
+
+**10. docs/PRE-PUBLIC-CHECKLIST.md — complete**
+- [x] Secrets scan commands (working tree + full Git history via trufflehog).
+- [x] Files to review for personal info.
+- [x] Licence checks (video, fonts, images, quotes, npm packages).
+- [x] Steps to make the repo public.
+
+### Final check results
+
+| Check | Result |
+|---|---|
+| `pnpm lint` | ✅ 0 errors, 0 warnings |
+| `pnpm typecheck` | ✅ 0 errors |
+| `pnpm test` | ✅ **147 passed** (13 skipped — emulator only) |
+| `pnpm build` | ✅ Clean |
+
+### Deploy commands (run these yourself)
+
+```bash
+pnpm build
+firebase deploy --only hosting,firestore:rules,firestore:indexes
+```
+
+---
+
+## What Works vs. What Is Not Finished (Honest Summary)
+
+### ✅ Works end-to-end
+- Full sheet UI with all 381 items, progress, notes, bookmarks, custom items, hide, search
+- Firestore sync across devices (offline-first)
+- Streaks, heatmap, pace, projected finish, consistency
+- Spaced revision queue and weekly review
+- Cinematic landing page with Google sign-in
+- In-app coach overlay with themes and speech synthesis
+- FCM token registration and service worker push handler
+- Export JSON / CSV, Import JSON
+- "Delete my data" with re-auth
+- PWA: installable, offline, update prompt
+
+### ⚠️ Not finished
+- **Push sender not deployed.** The separate `saira-push-sender` repo needs to be set up with a GitHub Actions schedule and service account credentials. Background push will only work once that is running.
+- **Practice item links.** ~119 items have `verified: false` and no links. You can add links yourself in the UI.
+- **Lighthouse numbers not measured.** Run manually as described in section 6 above.
