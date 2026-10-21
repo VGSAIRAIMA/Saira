@@ -8,6 +8,7 @@ export const KEYS = {
   HIDDEN_ITEMS: 'saira:hidden_items',
   LAST_TOUCHED: 'saira:last_touched',
   SETTINGS: 'saira:settings',
+  FAVORITE_QUOTES: 'saira:favorite_quotes',
 };
 
 // Fallback memory store for testing/environments without IndexedDB
@@ -48,7 +49,7 @@ export interface BackupData {
 }
 
 export async function loadInitialData() {
-  const [progress, customItems, dayLogs, hiddenIds, lastTouchedId, settings] =
+  const [progress, customItems, dayLogs, hiddenIds, lastTouchedId, settings, favoriteQuotes] =
     await Promise.all([
       safeGet<Record<string, ItemProgress>>(KEYS.PROGRESS, {}),
       safeGet<CustomItem[]>(KEYS.CUSTOM_ITEMS, []),
@@ -56,6 +57,7 @@ export async function loadInitialData() {
       safeGet<string[]>(KEYS.HIDDEN_ITEMS, []),
       safeGet<string | null>(KEYS.LAST_TOUCHED, null),
       safeGet<Settings | null>(KEYS.SETTINGS, null),
+      safeGet<string[]>(KEYS.FAVORITE_QUOTES, []),
     ]);
 
   return {
@@ -65,6 +67,7 @@ export async function loadInitialData() {
     hiddenIds: new Set(hiddenIds || []),
     lastTouchedId: lastTouchedId || null,
     settings: settings || null,
+    favoriteQuotes: new Set(favoriteQuotes || []),
   };
 }
 
@@ -90,6 +93,11 @@ export async function persistCustomItems(customItems: CustomItem[]): Promise<voi
 export async function persistHiddenItems(hiddenIds: Set<string> | string[]): Promise<void> {
   const arr = hiddenIds instanceof Set ? Array.from(hiddenIds) : hiddenIds;
   await safeSet(KEYS.HIDDEN_ITEMS, arr);
+}
+
+export async function persistFavoriteQuotes(quoteIds: Set<string> | string[]): Promise<void> {
+  const arr = quoteIds instanceof Set ? Array.from(quoteIds) : quoteIds;
+  await safeSet(KEYS.FAVORITE_QUOTES, arr);
 }
 
 export async function persistSettings(settings: Settings): Promise<void> {

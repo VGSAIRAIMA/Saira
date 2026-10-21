@@ -18,6 +18,10 @@ import {
 import { SairaBrand } from '@/components/SairaLogo';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { calculateStreak } from '@/lib/stats/streak';
+import { InstallButton } from '@/components/pwa/InstallButton';
+import { OfflineBanner } from '@/components/pwa/OfflineBanner';
+import { UpdatePrompt } from '@/components/pwa/UpdatePrompt';
 
 const navItems = [
   { to: '/today', label: 'Today', icon: Calendar },
@@ -31,9 +35,17 @@ export const AppShell: React.FC = () => {
   const syncStatus = useSheetStore((s) => s.syncStatus);
   const syncError = useSheetStore((s) => s.syncError);
   const retrySync = useSheetStore((s) => s.retrySync);
+  const initialize = useSheetStore((s) => s.initialize);
+  const dayLogs = useSheetStore((s) => s.dayLogs);
+  const streak = calculateStreak(dayLogs);
   const { user, signOutUser } = useAuthStore();
   const [profileOpen, setProfileOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Initialize store from local storage / Firestore once on app startup, whichever page opens first
+  useEffect(() => {
+    initialize();
+  }, [initialize]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -106,6 +118,9 @@ export const AppShell: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col">
+      {/* Offline Mode Indicator Banner */}
+      <OfflineBanner />
+
       {/* Sticky Top Bar */}
       <header className="sticky top-0 z-40 bg-surface/90 backdrop-blur-md border-b border-border">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
@@ -138,14 +153,20 @@ export const AppShell: React.FC = () => {
             </nav>
           </div>
 
-          {/* Right Action Icons: Sync Pill + Streak Flame + User Profile */}
+          {/* Right Action Icons: Install Button + Sync Pill + Streak Flame + User Profile */}
           <div className="flex items-center gap-2.5 sm:gap-3">
+            <InstallButton variant="topbar" />
+
             {renderSyncBadge()}
 
-            <div className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-surface-2/40 text-xs font-mono font-medium text-warning">
+            <Link
+              to="/today"
+              title={`Current streak: ${streak.currentStreak} day${streak.currentStreak === 1 ? '' : 's'}. Longest streak: ${streak.longestStreak} days.`}
+              className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-border bg-surface-2/40 text-xs font-mono font-medium text-warning hover:border-warning/40 transition-colors"
+            >
               <Flame className="w-3.5 h-3.5 fill-warning" />
-              <span>0</span>
-            </div>
+              <span>{streak.currentStreak}</span>
+            </Link>
 
             {/* User Profile Menu */}
             <div className="relative" ref={dropdownRef}>
@@ -271,6 +292,8 @@ export const AppShell: React.FC = () => {
           );
         })}
       </nav>
+      {/* PWA Update Ready Toast */}
+      <UpdatePrompt />
     </div>
   );
 };

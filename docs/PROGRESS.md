@@ -118,11 +118,94 @@ This document tracks progress through the milestones outlined in `docs/09-build-
 
 ---
 
-## Next Up: Milestone 3 (Today, Streaks, History, Quotes)
+## Milestone 3: Today, Streaks, History, Quotes — [COMPLETED]
+
+### Completed Tasks
+- [x] Deterministic Quotes Engine (`src/lib/quotes.ts`):
+  - Deterministic hashing algorithm based on `dayKey` (YYYY-MM-DD in user's timezone) indexing into `src/data/quotes.seed.json`.
+  - Guarantees the daily quote is stable for the whole day across reloads and devices.
+  - In-session `shift` rotation ("Another quote") without altering the day's stable anchor.
+  - Milestone celebration quotes (`cat: "milestone"`).
+  - Storage persistence for user's favorite quotes (`KEYS.FAVORITE_QUOTES`) in `src/lib/storage.ts` and `useSheetStore`.
+  - Comprehensive unit test suite in `src/lib/__tests__/quotes.test.ts`.
+- [x] Dynamic Streak Flame in AppShell:
+  - Top bar flame count dynamically wired to `calculateStreak(dayLogs).currentStreak`.
+- [x] Today Page (`src/features/today/TodayPage.tsx`):
+  - Time-of-day greeting ("Good morning / afternoon / evening") with user's first name.
+  - Quote Card (`QuoteCard.tsx`): Instrument Serif display typography (28px), category pill, favorite heart button (♥), "Another quote" rotator, and copy-to-clipboard button with copied check indicator.
+  - Target Progress Ring (`TodayTargetRing.tsx`): SVG animated circular progress ring, completion percentage, completed vs target counter, streak badge, minutes spent counter, and inline target editor dialog allowing learners to set custom daily goals (1–20 items).
+  - Continue Learning Card (`ContinueCard.tsx`): Resolves next uncompleted, non-hidden curriculum item in sequential order using `getContinueItemId()` with phase accent badge, subtopic/practice problem indicator, and direct "Continue Sheet" CTA.
+  - Milestone Celebrations Banner (`MilestoneBanner.tsx`): Triggers celebratory banner with trophy/flame badge and milestone quote upon reaching streak thresholds (3, 7, 14, 30, 50, 100 days) or completing 100% of any phase, with session-safe dismissal.
+  - 7-Day Consistency Strip (`WeekStrip.tsx`): Displays the last 7 calendar days leading up to today, evaluating active days via `isActiveDay(dayLog)` and rest days via `isPureRestDay(dayLog)` with active checkmarks and current day highlight.
+  - Spaced Revision Queue Banner: Summarizes items due for spaced review today with direct link to `/revision`.
+- [x] History & 52-Week Heatmap (`src/features/history/`):
+  - 52-Week Matrix (`Heatmap52.tsx`): 7 rows $\times$ 52 columns SVG calendar grid (364 days leading up to today) aligned to calendar day of week.
+  - 5 brand-violet intensity levels based on completed items ($\ge 1, \ge 2, \ge 3, \ge 5$) and study minutes ($\ge 15, \ge 30, \ge 60, \ge 90$).
+  - Floating hover tooltips displaying formatted date, completed problem count, revised count, study minutes, and rest day status.
+  - Chronological Activity Log Table (`ActivityLogTable.tsx`): Tabular history log with date, active/rest status badges, completion count, revision count, study minutes, and pagination.
+- [x] Progress & Analytics Page (`src/features/progress/ProgressPage.tsx`):
+  - Tabbed interface switching between "Analytics" and "History", with route `/history` redirecting to `/progress?tab=history`.
+  - Four Summary Stat Cards (`StatCards.tsx`):
+    - Overall Completion: `calculateOverallCompletion(allPhases, progress, hiddenIds)` with progress bar.
+    - 14-Day Study Pace: `calculatePace(dayLogs, todayKey, 14)` items / active day.
+    - 30-Day Consistency: `calculateConsistency30(dayLogs, todayKey)` percentage and active days count.
+    - Projected Finish Date: `calculateProjectedFinish(todayKey, remaining, pace)` with estimated study days.
+  - Phase Completion Breakdown (`PhaseBars.tsx`): Sequential progress bars for all 6 phases with designated phase accent tokens (`--ph0` through `--ph5`) and direct links to phase sheets.
+  - Weekly Velocity Chart (`WeeklyVelocityChart.tsx`): Recharts `BarChart` displaying weekly volume (completed & revised) over the past 8 weeks.
+  - Confidence Distribution (`ConfidenceDistribution.tsx`): Mastered (5), Strong (4), Solid (3), Shaky (2), Struggling (1), and Unrated breakdown with stacked visual distribution bar and percentage cards.
+  - Honest Empty States: Zero hard-coded fake numbers; clear, calm prompts when no activity has been logged yet.
+- [x] Zero Math Duplication: All metrics strictly derived using pure functions from `src/lib/stats/`.
+- [x] Verified Milestone 3 Acceptance:
+  - 76 unit and integration tests passing in Vitest (`pnpm test`).
+  - Zero TypeScript errors (`pnpm typecheck`).
+  - Zero ESLint errors or warnings (`pnpm lint`).
+  - Production build succeeds cleanly (`pnpm build`).
+
+---
+
+## Milestone 4: PWA and Offline — [COMPLETED]
+
+### Completed Tasks
+- [x] Web App Manifest Configuration:
+  - Configured `vite-plugin-pwa` with complete manifest per `docs/07-pwa-and-notifications.md §2`.
+  - Configured `name: "SAIRA: DSA Study Tracker"`, `short_name: "SAIRA"`, `theme_color: "#131315"`, `background_color: "#131315"`, `display: "standalone"`, `start_url: "/today"`, `scope: "/"`.
+  - Icon suite wired in manifest: `icon-192.png`, `icon-512.png`, and `maskable-512.png` with purpose `"maskable"`.
+  - App shortcuts registered for `/today`, `/sheet`, and `/revision`.
+  - `index.html` updated with Apple touch meta tags (`apple-mobile-web-app-capable`, `apple-mobile-web-app-status-bar-style`, `apple-touch-icon`, `theme-color`).
+- [x] Custom Service Worker (`src/sw.ts` with Workbox `injectManifest`):
+  - Precache app shell, HTML, JS, CSS, and bundled seed JSON.
+  - Stale-while-revalidate for local images and Google Fonts stylesheets.
+  - Cache-first for Google Fonts webfonts with 1-year expiration.
+  - Single-page application navigation fallback to `/index.html` with explicit denylist excluding Firebase internal routes (`/__/*`).
+  - **Explicit NetworkOnly bypass**: Firestore network calls (`firestore.googleapis.com`, `*.firebaseio.com`), Firebase Auth calls (`identitytoolkit.googleapis.com`, `securetoken.googleapis.com`), and Google OAuth endpoints are never cached by the service worker.
+  - `SKIP_WAITING` event listener for smooth user-controlled updates.
+- [x] Update Prompt UX (`src/components/pwa/UpdatePrompt.tsx`):
+  - Floating toast rendered via `useRegisterSW` (`virtual:pwa-register/react`).
+  - Alerts the learner when a new service worker version is waiting with an "Update Now" action and safe "Later" dismissal.
+- [x] Install UX (`src/components/pwa/InstallButton.tsx` & `usePWAInstall.ts`):
+  - Hook captures `beforeinstallprompt` and tracks `display-mode: standalone`.
+  - "Install App" button in sticky top bar and dedicated Install section in Settings.
+  - iOS-specific instructional modal guiding iPhone/iPad users through "Share → Add to Home Screen".
+  - Automatically hidden once installed in standalone mode.
+- [x] Offline Banner UX (`src/components/pwa/OfflineBanner.tsx`):
+  - Listens to `online` and `offline` events.
+  - Displays a calm amber notice reassuring the user that SAIRA is fully operational offline with local IndexedDB persistence.
+- [x] Verified Milestone 4 Acceptance:
+  - 79 unit and integration tests passing in Vitest (`pnpm test`).
+  - Unit tests in `src/components/pwa/__tests__/pwa.test.ts` verify manifest icon files exist, meta tags are set, and service worker bypass rules are enforced.
+  - Zero TypeScript errors (`pnpm typecheck`).
+  - Zero ESLint errors or warnings (`pnpm lint`).
+  - Production build succeeds with `dist/sw.js` and `dist/manifest.webmanifest` generated.
+
+---
+
+## Next Up: Milestone 5 (Reminders and the Coach)
 
 ### Plan for Next Step
-1. Build Today page (greeting, deterministic daily quote, today target ring, continue learning card, revision queue counter, 7-day strip).
-2. Build History log page and 52-week heatmap.
-3. Build Progress analytics page with phase completion bars, pace, projected finish date, weekly bars, and confidence distribution.
+1. Settings for times (08:30 and 19:00 default), days of week, voice, snooze, and quiet hours.
+2. Reminder scheduler (`src/lib/schedule.ts`) with fake-clock unit tests.
+3. Coach overlay component with avatar art (idle, talking, cheer), speech synthesis, and fallbacks.
+4. Local system notifications with `Start` and `Snooze` actions.
+5. Reminder preview button in Settings.
 
 

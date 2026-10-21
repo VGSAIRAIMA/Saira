@@ -14,6 +14,8 @@ import {
   persistProgressAndDayLog,
   persistCustomItems,
   persistHiddenItems,
+  persistFavoriteQuotes,
+  persistSettings,
   exportBackupJson,
   importBackupJson,
 } from '@/lib/storage';
@@ -51,6 +53,8 @@ export interface SheetState {
   dayLogs: Record<string, DayLog>;
   hiddenIds: Set<string>;
   lastTouchedId: string | null;
+  dailyTarget: number;
+  favoriteQuoteIds: Set<string>;
 
   selectedPhaseId: string;
   selectedItemId: string | null;
@@ -63,6 +67,8 @@ export interface SheetState {
 
   // Actions
   initialize: () => Promise<void>;
+  setDailyTarget: (target: number) => Promise<void>;
+  toggleFavoriteQuote: (quoteId: string) => Promise<void>;
   setSyncStatus: (status: SyncStatus) => void;
   setSyncError: (error: string | null) => void;
   retrySync: () => Promise<void>;
@@ -118,6 +124,8 @@ export const useSheetStore = create<SheetState>((set, get) => ({
   dayLogs: {},
   hiddenIds: new Set(),
   lastTouchedId: null,
+  dailyTarget: 3,
+  favoriteQuoteIds: new Set(),
 
   selectedPhaseId: 'p0',
   selectedItemId: null,
@@ -137,8 +145,53 @@ export const useSheetStore = create<SheetState>((set, get) => ({
       dayLogs: initialData.dayLogs,
       hiddenIds: initialData.hiddenIds,
       lastTouchedId: initialData.lastTouchedId,
+      dailyTarget: initialData.settings?.dailyTarget || 3,
+      favoriteQuoteIds: initialData.favoriteQuotes,
       isLoaded: true,
     });
+  },
+
+  setDailyTarget: async (target: number) => {
+    const valid = Math.max(1, Math.min(20, Math.round(target)));
+    set({ dailyTarget: valid });
+    await persistSettings({
+      tz: DEFAULT_TIMEZONE,
+      dailyTarget: valid,
+    });
+
+    const user = auth?.currentUser;
+    if (user && db) {
+      const { doc, setDoc } = await import('firebase/firestore');
+      await setDoc(
+        doc(db, 'users', user.uid, 'meta', 'settings'),
+        { dailyTarget: valid },
+        { merge: true }
+      ).catch(console.error);
+    }
+  },
+
+  toggleFavoriteQuote: async (quoteId: string) => {
+    const { favoriteQuoteIds } = get();
+    const next = new Set(favoriteQuoteIds);
+    const isAdding = !next.has(quoteId);
+    if (isAdding) {
+      next.add(quoteId);
+    } else {
+      next.delete(quoteId);
+    }
+    set({ favoriteQuoteIds: next });
+    await persistFavoriteQuotes(next);
+
+    const user = auth?.currentUser;
+    if (user && db) {
+      const { doc, setDoc, deleteDoc } = await import('firebase/firestore');
+      const favRef = doc(db, 'users', user.uid, 'favorites', quoteId);
+      if (isAdding) {
+        await setDoc(favRef, { createdAt: new Date().toISOString() }).catch(console.error);
+      } else {
+        await deleteDoc(favRef).catch(console.error);
+      }
+    }
   },
 
   setSyncStatus: (status) => set({ syncStatus: status }),

@@ -45,6 +45,10 @@ export const router = createBrowserRouter([
         element: <ProgressPage />,
       },
       {
+        path: '/history',
+        element: <Navigate to="/progress?tab=history" replace />,
+      },
+      {
         path: '/settings',
         element: <SettingsPage />,
       },

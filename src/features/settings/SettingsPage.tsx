@@ -1,5 +1,6 @@
 import React from 'react';
 import { Bell, Clock, Globe, Shield } from 'lucide-react';
+import { InstallButton } from '@/components/pwa/InstallButton';
 
 export const SettingsPage: React.FC = () => {
   return (
@@ -70,6 +71,9 @@ export const SettingsPage: React.FC = () => {
           <span className="text-xs text-success font-medium">Local First Active</span>
         </div>
       </div>
+
+      {/* PWA App Installation Section */}
+      <InstallButton variant="settings" />
     </div>
   );
 };
