@@ -81,6 +81,8 @@ export interface DayLog {
   restDay?: boolean;
 }
 
+export type CoachTheme = 'classic' | 'hero' | 'realm' | 'mahabharata' | 'mix';
+
 export interface ReminderSettings {
   morningTime: string;          // e.g. "08:30"
   studyTime: string;            // e.g. "19:00"
@@ -91,6 +93,7 @@ export interface ReminderSettings {
   quietHoursStart: string;      // default: "22:00"
   quietHoursEnd: string;        // default: "07:00"
   notificationsEnabled: boolean;// default: false
+  coachTheme?: CoachTheme;      // default: 'classic'
 }
 
 export interface ReminderState {

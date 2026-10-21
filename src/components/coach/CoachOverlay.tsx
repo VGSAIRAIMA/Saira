@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
-import { Volume2, X, Play, Clock, Sparkles } from 'lucide-react';
+import { Volume2, Play, Clock, Sparkles } from 'lucide-react';
 import { Coach, CoachState } from './Coach';
 import { coachVoice, VoiceState } from '@/lib/voice';
 import {
@@ -16,7 +17,7 @@ import {
 } from '@/lib/reminderStorage';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { getDayKey, DEFAULT_TIMEZONE } from '@/lib/time';
-import avatarLinesData from '@/data/avatar-lines.seed.json';
+import { pickLine } from '@/lib/coachLines';
 
 interface CoachOverlayProps {
   isOpen: boolean;
@@ -44,14 +45,11 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
 
   const autoDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Pick appropriate line from avatarLinesData
+  // Pick appropriate line using theme and non-repeating picker
   const getLine = useCallback(() => {
     if (customLine) return customLine;
-
-    const linesGroup = (avatarLinesData as unknown as Record<string, string[]>)[lineCategory] || avatarLinesData.study;
-    const randomIndex = Math.floor(Math.random() * linesGroup.length);
-    const rawLine = linesGroup[randomIndex] || linesGroup[0];
-    return rawLine.replace(/\{name\}/g, learnerName);
+    const settings = loadLocalReminderSettings();
+    return pickLine(lineCategory, settings.coachTheme || 'classic', learnerName);
   }, [customLine, lineCategory, learnerName]);
 
   const handleNotToday = useCallback(async () => {
@@ -98,6 +96,21 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
     });
   };
 
+  // Keyboard accessibility: Escape closes the card cleanly
+  useEffect(() => {
+    if (!isOpen) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        void handleNotToday();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, handleNotToday]);
+
   // Handle overlay open
   useEffect(() => {
     if (!isOpen) return;
@@ -139,29 +152,23 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
     return null;
   }
 
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
   const settings = loadLocalReminderSettings();
   const maxSnoozesReached = snoozeCount >= 3;
 
-  return (
+  const overlayContent = (
     <div
       role="dialog"
       aria-modal="true"
       aria-label="Study Coach Reminder"
-      className="fixed inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 z-50 max-w-lg p-4 sm:p-0 animate-fade-rise"
+      className="fixed inset-x-0 bottom-0 sm:inset-x-auto sm:right-6 sm:bottom-6 z-[9999] p-3 sm:p-0 pb-[max(0.75rem,env(safe-area-inset-bottom))] max-w-lg w-full sm:w-[480px] pointer-events-none"
     >
-      <div className="relative overflow-hidden rounded-3xl bg-surface/95 border border-primary/30 p-5 sm:p-6 shadow-2xl backdrop-blur-xl">
+      <div className="pointer-events-auto relative overflow-hidden rounded-3xl bg-surface/95 border border-primary/30 p-5 sm:p-6 shadow-2xl backdrop-blur-xl animate-fade-rise">
         {/* Subtle Brand Glow Gradient */}
         <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-transparent to-accent-pink/10 pointer-events-none" />
-
-        {/* Dismiss X button */}
-        <button
-          type="button"
-          onClick={handleNotToday}
-          className="absolute top-4 right-4 p-1.5 rounded-xl text-muted-foreground hover:text-foreground hover:bg-surface-2 transition-colors cursor-pointer"
-          aria-label="Dismiss reminder"
-        >
-          <X className="w-4 h-4" />
-        </button>
 
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-5">
           {/* Coach Avatar */}
@@ -198,7 +205,7 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
               </button>
             )}
 
-            {/* Action Buttons: Start, Snooze, Not today */}
+            {/* Action Buttons: Start, Snooze, Not today (No X button, Escape key supported) */}
             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
               <button
                 type="button"
@@ -239,10 +246,12 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
 
         {/* Honest browser capability disclaimer */}
         <div className="mt-4 pt-3 border-t border-border/40 text-[11px] text-muted-foreground/75 flex items-center justify-between">
-          <span>In-app reminder · Auto-dismisses in 60s</span>
+          <span>In-app reminder · Auto-dismisses in 60s (or Esc)</span>
           <span className="hidden sm:inline">Keep app tab open for nudges</span>
         </div>
       </div>
     </div>
   );
+
+  return createPortal(overlayContent, document.body);
 };

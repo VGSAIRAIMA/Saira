@@ -6,6 +6,7 @@ import {
   Shield,
   Volume2,
   VolumeX,
+  Sparkles,
   Info,
   CheckCircle,
   AlertCircle,
@@ -13,12 +14,13 @@ import {
 } from 'lucide-react';
 import { InstallButton } from '@/components/pwa/InstallButton';
 import { CoachOverlay } from '@/components/coach/CoachOverlay';
-import { ReminderSettings } from '@/types/sheet';
+import { ReminderSettings, CoachTheme } from '@/types/sheet';
 import {
   loadLocalReminderSettings,
   saveReminderSettings,
 } from '@/lib/reminderStorage';
 import { showLocalNotification } from '@/lib/notifications';
+import { pickLine } from '@/lib/coachLines';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
 
@@ -80,8 +82,9 @@ export const SettingsPage: React.FC = () => {
     setPreviewOpen(true);
     if (notificationPermission === 'granted') {
       const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
+      const previewLine = pickLine('study', settings.coachTheme || 'classic', learnerName);
       showLocalNotification('SAIRA Coach Preview', {
-        body: `Knock knock, ${learnerName}. Your sheet is ready whenever you are!`,
+        body: previewLine,
         slot: 'study',
       });
     }
@@ -292,6 +295,50 @@ export const SettingsPage: React.FC = () => {
             </div>
           </div>
 
+          {/* Coach Theme Selection */}
+          <div className="p-4 rounded-2xl bg-surface-2/40 border border-border/60 space-y-3">
+            <div className="space-y-0.5">
+              <span className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5 text-primary" />
+                Coach Theme
+              </span>
+              <p className="text-[11px] text-muted-foreground">
+                Tone and style of avatar messages (Mix picks a different theme each day).
+              </p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {[
+                { id: 'classic', label: 'Classic', desc: 'Gentle & encouraging' },
+                { id: 'hero', label: 'Hero', desc: 'Brave & mission-ready' },
+                { id: 'realm', label: 'Realm', desc: 'Fantasy & exploration' },
+                { id: 'mahabharata', label: 'Mahabharata', desc: 'Discipline & focus' },
+                { id: 'mix', label: 'Mix', desc: 'Daily rotating theme' },
+              ].map((themeOpt) => {
+                const isSelected = (settings.coachTheme || 'classic') === themeOpt.id;
+                return (
+                  <button
+                    key={themeOpt.id}
+                    type="button"
+                    onClick={() => updateSetting('coachTheme', themeOpt.id as CoachTheme)}
+                    className={`p-3 rounded-2xl border text-left transition-all cursor-pointer ${
+                      isSelected
+                        ? 'bg-primary/10 border-primary text-foreground shadow-xs ring-1 ring-primary/40'
+                        : 'bg-surface border-border/60 text-muted-foreground hover:text-foreground hover:bg-surface-2'
+                    }`}
+                  >
+                    <div className="text-xs font-semibold flex items-center justify-between">
+                      <span>{themeOpt.label}</span>
+                      {isSelected && <span className="w-2 h-2 rounded-full bg-primary" />}
+                    </div>
+                    <p className="text-[10px] text-muted-foreground mt-0.5 leading-snug">
+                      {themeOpt.desc}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Quiet Hours */}
           <div className="p-4 rounded-2xl bg-surface-2/40 border border-border/60 space-y-3">
             <div className="flex items-center justify-between">
@@ -392,7 +439,6 @@ export const SettingsPage: React.FC = () => {
       <CoachOverlay
         isOpen={previewOpen}
         slot="study"
-        customLine="Knock knock! This is a preview of your SAIRA study coach. Ready to learn?"
         onClose={() => setPreviewOpen(false)}
       />
     </div>

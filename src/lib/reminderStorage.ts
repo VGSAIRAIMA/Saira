@@ -14,6 +14,7 @@ export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = {
   quietHoursStart: '22:00',
   quietHoursEnd: '07:00',
   notificationsEnabled: false,
+  coachTheme: 'classic',
 };
 
 export const DEFAULT_REMINDER_STATE: ReminderState = {

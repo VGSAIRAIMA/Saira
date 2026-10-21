@@ -14,7 +14,7 @@ import {
 import { showLocalNotification } from './notifications';
 import { useSheetStore } from '@/stores/useSheetStore';
 import { useAuthStore } from '@/stores/useAuthStore';
-import avatarLinesData from '@/data/avatar-lines.seed.json';
+import { pickLine } from './coachLines';
 
 export function useScheduler() {
   const location = useLocation();
@@ -101,8 +101,7 @@ export function useScheduler() {
       // Also fire local system notification if enabled
       if (settings.notificationsEnabled) {
         const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
-        const linesGroup = (avatarLinesData as unknown as Record<string, string[]>)[category] || avatarLinesData.study;
-        const line = (linesGroup[0] || 'Ready for your reps?').replace(/\{name\}/g, learnerName);
+        const line = pickLine(category, settings.coachTheme || 'classic', learnerName);
 
         showLocalNotification(
           result.slot === 'morning' ? 'SAIRA Morning Nudge' : 'SAIRA Study Session',
@@ -158,7 +157,7 @@ export function useScheduler() {
     const settings = loadLocalReminderSettings();
     if (settings.notificationsEnabled) {
       const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
-      const line = avatarLinesData.study[0].replace(/\{name\}/g, learnerName);
+      const line = pickLine('study', settings.coachTheme || 'classic', learnerName);
       showLocalNotification('SAIRA Coach Preview', {
         body: line,
         slot: 'study',
