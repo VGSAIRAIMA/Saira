@@ -94,6 +94,13 @@ export interface ReminderSettings {
   quietHoursEnd: string;        // default: "07:00"
   notificationsEnabled: boolean;// default: false
   coachTheme?: CoachTheme;      // default: 'classic'
+  /**
+   * First name derived from Firebase Auth displayName (e.g. "Priya" from "Priya Sharma").
+   * Written automatically on every sign-in and page reload.
+   * Used by the push sender to personalise coach line {name} placeholders.
+   * Falls back to "friend" when absent.
+   */
+  firstName?: string;
 }
 
 export interface ReminderState {

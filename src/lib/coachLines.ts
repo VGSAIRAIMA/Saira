@@ -76,7 +76,7 @@ export function resolveCoachTheme(
 export function pickLine(
   slot: string,
   theme: CoachTheme = 'classic',
-  name: string = 'Raima',
+  name: string = 'friend',
   date: Date = new Date()
 ): string {
   const concreteTheme = resolveCoachTheme(theme, date);

@@ -10,6 +10,7 @@ import {
   loadLocalReminderState,
   saveReminderState,
   subscribeToReminderBroadcast,
+  deriveFirstName,
 } from './reminderStorage';
 import { showLocalNotification } from './notifications';
 import { registerFcmToken } from './fcm';
@@ -110,7 +111,7 @@ export function useScheduler() {
 
       // Also fire local system notification if enabled
       if (settings.notificationsEnabled) {
-        const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
+        const learnerName = deriveFirstName(user?.displayName);
         const line = pickLine(category, settings.coachTheme || 'classic', learnerName);
 
         showLocalNotification(
@@ -166,7 +167,7 @@ export function useScheduler() {
 
     const settings = loadLocalReminderSettings();
     if (settings.notificationsEnabled) {
-      const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
+      const learnerName = deriveFirstName(user?.displayName);
       const line = pickLine('study', settings.coachTheme || 'classic', learnerName);
       showLocalNotification('SAIRA Coach Preview', {
         body: line,

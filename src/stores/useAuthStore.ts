@@ -69,5 +69,15 @@ if (auth) {
       user: firebaseUser,
       isLoading: false,
     });
+
+    // Sync the first name to Firestore whenever a session is confirmed.
+    // This covers: initial sign-in, page reload with an existing session,
+    // and any token refresh that re-fires onAuthStateChanged.
+    // Fire-and-forget — never blocks the auth state update.
+    if (firebaseUser) {
+      import('@/lib/reminderStorage')
+        .then(({ syncFirstName }) => syncFirstName(firebaseUser))
+        .catch(() => { /* best-effort — ignore */ });
+    }
   });
 }

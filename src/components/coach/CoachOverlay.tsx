@@ -14,6 +14,7 @@ import {
   loadLocalReminderState,
   saveReminderState,
   loadLocalReminderSettings,
+  deriveFirstName,
 } from '@/lib/reminderStorage';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { getDayKey, DEFAULT_TIMEZONE } from '@/lib/time';
@@ -36,7 +37,7 @@ export const CoachOverlay: React.FC<CoachOverlayProps> = ({
 }) => {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
-  const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
+  const learnerName = deriveFirstName(user?.displayName);
 
   const [coachState, setCoachState] = useState<CoachState>('idle');
   const [displayText, setDisplayText] = useState('');

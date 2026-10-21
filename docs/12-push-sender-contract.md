@@ -20,18 +20,23 @@ This document contains everything the sender needs. Do not guess field names.
 ```
 users/{uid}/meta/settings
 ```
+
+> **Note on Timezone:** All times in `users/{uid}/meta/settings` (`morningTime`, `studyTime`, `quietHoursStart`, `quietHoursEnd`) are in **IST (`Asia/Kolkata`, UTC+05:30)**.
+
 Fields:
 | Field | Type | Default | Meaning |
 |---|---|---|---|
-| `morningTime` | `string` | `"08:30"` | HH:MM, 24-h, in the user's timezone |
-| `studyTime` | `string` | `"19:00"` | HH:MM, 24-h, in the user's timezone |
+| `morningTime` | `string` | `"08:30"` | HH:MM (24-h) in IST |
+| `studyTime` | `string` | `"19:00"` | HH:MM (24-h) in IST |
 | `daysOfWeek` | `number[]` | `[0,1,2,3,4,5,6]` | JS weekday numbers (0=Sunday, 6=Saturday) |
-| `quietHoursStart` | `string \| null` | `null` | HH:MM, null = no quiet hours |
-| `quietHoursEnd` | `string \| null` | `null` | HH:MM |
+| `quietHoursStart` | `string \| null` | `null` | HH:MM in IST, null = no quiet hours |
+| `quietHoursEnd` | `string \| null` | `null` | HH:MM in IST |
 | `snoozeMinutes` | `number` | `15` | minutes per snooze |
 | `maxSnoozeCount` | `number` | `3` | max snoozes per slot per day |
 | `notificationsEnabled` | `boolean` | `false` | must be `true` to send |
+| `dailyTarget` | `number` | `3` | Target items to complete per day (used by §2c) |
 | `coachTheme` | `"classic" \| "hero" \| "realm" \| "mahabharata" \| "mix"` | `"classic"` | which theme to pick lines from |
+| `firstName` | `string` | `"friend"` | **Learner's first name for `{name}` substitution** (see §2d) |
 
 ### 2b. Reminder state (last fired)
 ```
@@ -40,11 +45,14 @@ users/{uid}/meta/reminderState
 Fields:
 | Field | Type | Meaning |
 |---|---|---|
-| `lastFiredSlot` | `{ [dayKey: string]: string[] }` | e.g. `{ "2026-10-21": ["morning"] }` — slots fired today |
+| `lastFiredSlot` | `string \| { [dayKey: string]: string[] }` | e.g. `"morning"` / `"study"`, or map `{ "2026-10-21": ["morning"] }` |
+| `lastFiredDate` | `string \| undefined` | `YYYY-MM-DD` in IST of the last fired slot |
 | `snoozeUntil` | `number \| null` | Unix ms timestamp; if `Date.now() < snoozeUntil` skip the slot |
-| `dismissedToday` | `string \| null` | dayKey of the last "not today" dismissal; if matches today skip all slots |
+| `dismissedSlots` | `string[] \| undefined` | Array of `"${dayKey}:${slot}"` dismissed by user (e.g. `["2026-10-21:morning"]`) |
+| `dismissedToday` | `string \| null` | Optional dayKey string of the last "not today" dismissal; if matches today skip all slots |
+| `missedNudgeFiredForDate` | `string \| undefined` | `YYYY-MM-DD` dayKey when `nudge_missed` was fired (prevents firing it more than once per day) |
 
-The sender must read this doc to avoid sending duplicate notifications for the same slot on the same day.
+The sender reads this doc to ensure it does not fire a slot that has already fired today.
 
 ### 2c. Today's progress (daily target check)
 ```
@@ -55,42 +63,76 @@ users/{uid}/days/{dayKey}
 Fields:
 | Field | Type | Meaning |
 |---|---|---|
-| `completed` | `number` | items completed today |
+| `completed` | `number` | items completed today (0 if doc does not exist) |
 
-Also read from:
+`dailyTarget` is read from `users/{uid}/meta/settings` (§2a, default `3`).
+If `completed >= dailyTarget`, skip the slot — goal already met today.
+
+### 2d. Learner's first name (for `{name}` placeholder in coach lines)
+
+**Exact path:**
 ```
 users/{uid}/meta/settings
 ```
-Field `dailyTarget` (`number`, default `3`): if `completed >= dailyTarget`, skip the slot — goal already met.
+**Exact field:** `firstName` (`string`)
+
+**How it is written by the app:**
+On every sign-in and on every page reload (inside Firebase Auth's `onAuthStateChanged`), the app calls `syncFirstName(user)` in `src/lib/reminderStorage.ts`. This function:
+1. Takes `user.displayName` from Firebase Auth (e.g. `"Priya Sharma"`).
+2. Splits on space and takes the first word (`"Priya"`).
+3. Trims whitespace; falls back to `"friend"` when displayName is null, undefined, or empty.
+4. Writes `{ firstName: "Priya" }` with `merge: true` to `users/{uid}/meta/settings`.
+
+**How the sender uses it:**
+```js
+// Inside the sender, after reading the settings doc:
+const firstName = settings.firstName || 'friend';
+line = line.replace(/\{name\}/g, firstName);
+```
+
+**Fallback:** if the `firstName` field is missing or empty, fall back to `"friend"`.
+
+**The sender does NOT need to call the Firebase Auth Admin SDK** (`admin.auth().getUser(uid)`). `firstName` is read directly from the settings doc that the sender already fetches — zero extra reads.
 
 ---
 
-## 3. Computing dayKey and current slot time in Asia/Kolkata (IST)
+## 3. Computing dayKey and slot evaluation in Asia/Kolkata (IST)
 
 ```js
-const { DateTime } = require('luxon'); // or use Intl.DateTimeFormat
+const { DateTime } = require('luxon'); // or Intl.DateTimeFormat
 
 function getDayKeyIST() {
   return DateTime.now().setZone('Asia/Kolkata').toFormat('yyyy-MM-dd');
 }
 
-function getCurrentHHMM_IST() {
+function getCurrentMinutesIST() {
   const now = DateTime.now().setZone('Asia/Kolkata');
-  return `${String(now.hour).padStart(2, '0')}:${String(now.minute).padStart(2, '0')}`;
+  return now.hour * 60 + now.minute;
+}
+
+function parseTimeToMinutes(hhmm) {
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
 }
 ```
 
-A slot fires if the current IST time is within a **15-minute window** of `morningTime` or `studyTime`:
+### 30-Minute Slot Window Rule
+The sender fires a slot if:
 ```
-slotTime = "08:30"           // from settings
-windowStart = "08:30"
-windowEnd   = "08:44"        // slotTime + 14 minutes inclusive
+slotTime <= now < slotTime + 30 minutes (IST)
 ```
-Fire if `windowStart <= currentTime <= windowEnd` (string comparison works for HH:MM).
+and `lastFiredSlot` does not already contain that slot for today.
 
-Quiet hours: if `quietHoursStart` and `quietHoursEnd` are set, and current IST time falls between them, skip all slots.
+Example:
+- `morningTime = "08:30"` (510 minutes)
+- Slot window: `[08:30, 09:00)` IST (minutes `510 <= now < 540`)
 
-Current day of week: `DateTime.now().setZone('Asia/Kolkata').weekday % 7` → JS weekday (0=Sunday). Skip if not in `daysOfWeek`.
+### Additional Guard Rules:
+1. **Quiet hours:** if `quietHoursStart` and `quietHoursEnd` are configured, and current IST time falls within quiet hours, skip all slots.
+2. **Days of week:** `DateTime.now().setZone('Asia/Kolkata').weekday % 7` → JS weekday (0=Sunday, 6=Saturday). Skip if not in `settings.daysOfWeek`.
+3. **Dismissed today:** skip if `reminderState.dismissedSlots` contains `"${dayKey}:${slot}"` or `reminderState.dismissedToday === dayKey`.
+4. **Snooze:** skip if `reminderState.snoozeUntil != null` and `Date.now() < reminderState.snoozeUntil`.
+5. **Daily target:** skip if `completedToday >= settings.dailyTarget`.
 
 ---
 
@@ -104,26 +146,32 @@ Fields:
 |---|---|---|
 | `token` | `string` | FCM registration token — use as the send target |
 | `platform` | `string` | `"desktop"` / `"android-chrome"` / `"ios-safari"` |
-| `tz` | `string` | IANA timezone from the client (informational; trust `Asia/Kolkata` from settings for scheduling) |
+| `tz` | `string` | Client timezone (informational; scheduling always uses IST) |
 | `lastSeenAt` | `Timestamp` | Firestore server timestamp; skip devices with `lastSeenAt < now - 30d` |
 
 The sender lists all docs in `users/{uid}/devices` and sends to each valid token.
 
 ### Invalid token cleanup
-If FCM returns `messaging/registration-token-not-registered`, the sender must delete that device doc:
-```
-users/{uid}/devices/{deviceId}  →  delete
+When iterating through `response.responses[i]`:
+If `!res.success`, delete the device doc if the error is due to an invalid/expired token:
+- `error.code === 'messaging/registration-token-not-registered'`
+- `error.code === 'messaging/invalid-registration-token'`
+- `error.code === 'messaging/invalid-argument'` (or malformed token error)
+
+Delete command:
+```js
+await admin.firestore().doc(`users/${uid}/devices/${deviceId}`).delete();
 ```
 
 ---
 
 ## 5. Coach line selection
 
-The sender must pick a line from the avatar-lines file. Copy the exact JSON from:
+The sender picks a line from the avatar-lines seed file. Copy the exact JSON from:
 ```
 src/data/avatar-lines.seed.json
 ```
-(in this repo — copy it into the sender repo or read it from Firestore if you store it there).
+(in this repo — copy it into the sender repo).
 
 **Schema (schemaVersion: 2):**
 ```json
@@ -146,8 +194,8 @@ src/data/avatar-lines.seed.json
 }
 ```
 
-**How to pick a theme:**
-- `classic`, `hero`, `realm`, `mahabharata` → use directly.
+### How to pick a theme:
+- `classic`, `hero`, `realm`, `mahabharata` → use directly from `settings.coachTheme`.
 - `mix` → deterministic daily rotation:
   ```js
   const themes = ['classic', 'hero', 'realm', 'mahabharata'];
@@ -157,15 +205,24 @@ src/data/avatar-lines.seed.json
   const theme = themes[hash % themes.length];
   ```
 
-**How to pick a line:**
-1. Look up `themes[theme][group]` where `group` = `"morning"` or `"study"` (match the slot name).
-2. If `nudge_missed` applies (yesterday's `days/{dayKey}.completed === 0` or doc missing), use group `"nudge_missed"`.
-3. Pick a random line. Replace `{name}` with the learner's first name:
+### How to decide `nudge_missed`:
+The app decides `nudge_missed` strictly as follows (matching `src/lib/schedule.ts`):
+1. **Slot must be `"study"`** (never `"morning"`).
+2. Calculate yesterday's dayKey in IST: `yesterdayKey = DateTime.fromISO(dayKey).minus({ days: 1 }).toFormat('yyyy-MM-dd')`.
+3. Check `users/{uid}/days/{yesterdayKey}`.
+4. If yesterday's log is missing OR `yesterdayLog.completed === 0` (and `yesterdayLog.restDay !== true`), yesterday was missed.
+5. Check that `nudge_missed` has not already fired today: `reminderState.missedNudgeFiredForDate !== todayKey`.
+6. If all match: use line group `"nudge_missed"`.
+7. Otherwise: use line group `"study"`.
+
+### How to pick the line & substitute `{name}`:
+1. Look up `themes[theme][group]` where `group` is `"morning"`, `"study"`, or `"nudge_missed"`.
+2. Pick a line from the array (random or non-repeating).
+3. The first name comes **ONLY** from `users/{uid}/meta/settings` field `firstName` (§2d):
    ```js
-   const firstName = (profile.displayName || 'Raima').split(' ')[0];
+   const firstName = settings.firstName || 'friend';
    line = line.replace(/\{name\}/g, firstName);
    ```
-   The learner's `displayName` is in `users/{uid}/profile` or from Firebase Auth admin.
 
 ---
 
@@ -178,15 +235,17 @@ const message = {
   tokens: [token1, token2, ...],   // from devices collection
   data: {
     slot:     'morning',            // or 'study'
-    line:     'Good morning, Raima! Your sheet is ready.',
+    line:     'Good morning, friend! Your sheet is ready.',
     url:      '/today?coach=morning',
     dayKey:   '2026-10-21',         // IST day key YYYY-MM-DD
     imageUrl: '/icons/icon-192.png' // optional; coach art URL
   },
-  // webpush config for better delivery on Chrome
+  // webpush config for immediate delivery
   webpush: {
-    headers: { TTL: '3600' },       // 1-hour time-to-live
-    fcmOptions: { link: 'https://saira-dsa.web.app/today' }
+    headers: {
+      TTL: '3600',                  // 1-hour time-to-live
+      Urgency: 'high'               // High priority delivery
+    }
   }
 };
 const response = await admin.messaging().sendEachForMulticast(message);
@@ -196,33 +255,35 @@ const response = await admin.messaging().sendEachForMulticast(message);
 
 ## 7. After sending — update reminderState
 
-After a successful send (or skip) the sender writes:
-```
-users/{uid}/meta/reminderState
-```
-Merge write (do NOT overwrite the whole doc):
+**Important:** Write `lastFiredSlot` **ONLY after at least one token accepted the message** (`response.successCount > 0`). If every send fails, do NOT write to `reminderState`, so the next cron run will retry within the 30-minute window.
+
 ```js
-admin.firestore().doc(`users/${uid}/meta/reminderState`).set(
-  {
-    lastFiredSlot: {
-      [dayKey]: admin.firestore.FieldValue.arrayUnion(slot)
-    }
-  },
-  { merge: true }
-);
+if (response.successCount > 0) {
+  const isMissedNudge = (group === 'nudge_missed');
+  
+  await admin.firestore().doc(`users/${uid}/meta/reminderState`).set(
+    {
+      lastFiredSlot: slot,
+      lastFiredDate: dayKey,
+      lastFiredSlots: admin.firestore.FieldValue.arrayUnion(`${dayKey}:${slot}`),
+      ...(isMissedNudge ? { missedNudgeFiredForDate: dayKey } : {})
+    },
+    { merge: true }
+  );
+}
 ```
 
 ---
 
 ## 8. Scheduling cadence
 
-Run the sender every **15 minutes** (e.g. GitHub Actions cron `*/15 * * * *` UTC, or Cloud Scheduler).
+Run the sender via **GitHub Actions cron only** (e.g. `*/15 * * * *` or `*/10 * * * *` UTC).
 
 Reference times in UTC for the default IST schedule:
 - 08:30 IST = 03:00 UTC
 - 19:00 IST = 13:30 UTC
 
-GitHub Actions cron can be up to 15 minutes late. Cloud Scheduler is more reliable. Either is acceptable — treat delivery as best-effort.
+GitHub Actions cron can occasionally be delayed by several minutes. Because the sender evaluates a **30-minute window** (`slotTime <= now < slotTime + 30m`), any cron run within 30 minutes of the slot time will reliably trigger the reminder.
 
 ---
 

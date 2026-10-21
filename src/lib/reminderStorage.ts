@@ -1,5 +1,7 @@
 import { ReminderSettings, ReminderState } from '@/types/sheet';
 import { auth, db } from '@/lib/firebase';
+import type { User } from 'firebase/auth';
+
 
 const REMINDER_SETTINGS_KEY = 'saira:reminder_settings';
 const REMINDER_STATE_KEY = 'saira:reminder_state';
@@ -139,5 +141,60 @@ export async function saveReminderState(state: ReminderState): Promise<void> {
     } catch (err) {
       console.warn('Could not sync reminder state to Firestore:', err);
     }
+  }
+}
+
+/**
+ * Derives the learner's first name from a Firebase Auth User object.
+ *
+ * Rules (same as every component in the app):
+ *   - Take the first space-separated word of displayName.
+ *   - Trim whitespace.
+ *   - Fall back to "friend" when displayName is null, undefined, or empty.
+ *
+ * This is a pure function so it can be tested without Firebase.
+ */
+export function deriveFirstName(displayName: string | null | undefined): string {
+  const trimmed = displayName?.trim() ?? '';
+  if (!trimmed) return 'friend';
+  return trimmed.split(' ')[0] ?? 'friend';
+}
+
+/**
+ * Writes the user's first name to:
+ *   - localStorage (inside the reminder settings blob)
+ *   - Firestore: users/{uid}/meta/settings  { firstName: "Priya" }  (merge)
+ *
+ * Call this on every successful sign-in and on page reload when Firebase
+ * confirms an existing session (inside onAuthStateChanged).
+ *
+ * The push sender reads firstName from the same settings doc it already
+ * fetches, so it never needs an extra Firebase Auth Admin call.
+ */
+export async function syncFirstName(user: User): Promise<void> {
+  const firstName = deriveFirstName(user.displayName);
+
+  // 1. Persist locally so the in-app learner name stays correct offline.
+  try {
+    const current = loadLocalReminderSettings();
+    if (current.firstName !== firstName) {
+      const updated = { ...current, firstName };
+      localStorage.setItem(REMINDER_SETTINGS_KEY, JSON.stringify(updated));
+    }
+  } catch {
+    // localStorage unavailable — not fatal
+  }
+
+  // 2. Sync to Firestore with merge so we never overwrite other settings fields.
+  if (!user.uid || !db) return;
+  try {
+    const { doc, setDoc } = await import('firebase/firestore');
+    await setDoc(
+      doc(db, 'users', user.uid, 'meta', 'settings'),
+      { firstName },
+      { merge: true }
+    );
+  } catch (err) {
+    console.warn('[syncFirstName] Could not sync to Firestore:', err);
   }
 }

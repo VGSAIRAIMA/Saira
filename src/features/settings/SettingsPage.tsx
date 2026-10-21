@@ -19,6 +19,7 @@ import { ReminderSettings, CoachTheme } from '@/types/sheet';
 import {
   loadLocalReminderSettings,
   saveReminderSettings,
+  deriveFirstName,
 } from '@/lib/reminderStorage';
 import { showLocalNotification } from '@/lib/notifications';
 import { pickLine } from '@/lib/coachLines';
@@ -83,7 +84,7 @@ export const SettingsPage: React.FC = () => {
   const handlePreviewCoach = () => {
     setPreviewOpen(true);
     if (notificationPermission === 'granted') {
-      const learnerName = user?.displayName ? user.displayName.split(' ')[0] : 'Raima';
+      const learnerName = deriveFirstName(user?.displayName);
       const previewLine = pickLine('study', settings.coachTheme || 'classic', learnerName);
       showLocalNotification('SAIRA Coach Preview', {
         body: previewLine,
