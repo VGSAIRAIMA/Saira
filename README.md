@@ -2,7 +2,11 @@
 
 > **A dark-mode installable PWA that tracks your Striver's DSA Sheet progress with streaks, a coach, and (soon) background push reminders.**
 
-![SAIRA Screenshot — placeholder, replace with a real screenshot](docs/reference/screenshot-placeholder.png)
+![image](https://github.com/VGSAIRAIMA/Saira/blob/main/Screenshot%202026-10-21%20183441.png)
+
+![image](https://github.com/VGSAIRAIMA/Saira/blob/main/Screenshot%202026-10-21%20183550.png)
+
+![image](https://github.com/VGSAIRAIMA/Saira/blob/main/Screenshot%202026-10-21%20183603.png)
 
 ---
 
