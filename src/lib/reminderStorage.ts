@@ -12,12 +12,69 @@ export const DEFAULT_REMINDER_SETTINGS: ReminderSettings = {
   daysOfWeek: [0, 1, 2, 3, 4, 5, 6], // Sun - Sat
   voiceEnabled: true,
   snoozeMinutes: 15,
+  maxSnoozeCount: 3,
   quietHoursEnabled: false,
   quietHoursStart: '22:00',
   quietHoursEnd: '07:00',
   notificationsEnabled: false,
   coachTheme: 'classic',
 };
+
+/**
+ * Converts in-app ReminderSettings to the flat cloud structure expected on
+ * users/{uid}/meta/settings.
+ */
+export function toCloudSettings(
+  settings: ReminderSettings,
+  dailyTarget?: number
+): Record<string, unknown> {
+  return {
+    tz: 'Asia/Kolkata',
+    morningTime: settings.morningTime,
+    studyTime: settings.studyTime,
+    daysOfWeek: settings.daysOfWeek,
+    quietHoursStart: settings.quietHoursEnabled ? settings.quietHoursStart : null,
+    quietHoursEnd: settings.quietHoursEnabled ? settings.quietHoursEnd : null,
+    quietHoursEnabled: settings.quietHoursEnabled,
+    snoozeMinutes: settings.snoozeMinutes,
+    maxSnoozeCount: settings.maxSnoozeCount ?? 3,
+    voiceEnabled: settings.voiceEnabled,
+    notificationsEnabled: settings.notificationsEnabled,
+    coachTheme: settings.coachTheme || 'classic',
+    ...(settings.firstName ? { firstName: settings.firstName } : {}),
+    ...(typeof dailyTarget === 'number' ? { dailyTarget } : {}),
+  };
+}
+
+/**
+ * Merges cloud meta/settings fields into local ReminderSettings and persists to localStorage.
+ */
+export function mergeCloudSettingsToLocal(cloudSettings: Record<string, unknown>): ReminderSettings {
+  const current = loadLocalReminderSettings();
+  const merged: ReminderSettings = {
+    ...current,
+    morningTime: (cloudSettings.morningTime as string) || current.morningTime,
+    studyTime: (cloudSettings.studyTime as string) || current.studyTime,
+    daysOfWeek: Array.isArray(cloudSettings.daysOfWeek) ? (cloudSettings.daysOfWeek as number[]) : current.daysOfWeek,
+    snoozeMinutes: typeof cloudSettings.snoozeMinutes === 'number' ? cloudSettings.snoozeMinutes : current.snoozeMinutes,
+    maxSnoozeCount: typeof cloudSettings.maxSnoozeCount === 'number' ? cloudSettings.maxSnoozeCount : (current.maxSnoozeCount ?? 3),
+    quietHoursStart: (cloudSettings.quietHoursStart as string) || current.quietHoursStart,
+    quietHoursEnd: (cloudSettings.quietHoursEnd as string) || current.quietHoursEnd,
+    quietHoursEnabled: typeof cloudSettings.quietHoursEnabled === 'boolean'
+      ? cloudSettings.quietHoursEnabled
+      : Boolean(cloudSettings.quietHoursStart && cloudSettings.quietHoursEnd),
+    voiceEnabled: typeof cloudSettings.voiceEnabled === 'boolean' ? cloudSettings.voiceEnabled : current.voiceEnabled,
+    notificationsEnabled: typeof cloudSettings.notificationsEnabled === 'boolean' ? cloudSettings.notificationsEnabled : current.notificationsEnabled,
+    coachTheme: (cloudSettings.coachTheme as ReminderSettings['coachTheme']) || current.coachTheme,
+    firstName: (cloudSettings.firstName as string) || current.firstName,
+  };
+  try {
+    localStorage.setItem(REMINDER_SETTINGS_KEY, JSON.stringify(merged));
+  } catch {
+    // ignore
+  }
+  return merged;
+}
 
 export const DEFAULT_REMINDER_STATE: ReminderState = {
   lastFiredSlot: undefined,
@@ -91,11 +148,29 @@ export async function saveReminderSettings(settings: ReminderSettings): Promise<
       const { doc, setDoc } = await import('firebase/firestore');
       await setDoc(
         doc(db, 'users', user.uid, 'meta', 'settings'),
-        { reminders: settings },
+        toCloudSettings(settings),
         { merge: true }
       );
+      // Clear error in sync badge if it was in error state
+      try {
+        const { useSheetStore } = await import('@/stores/useSheetStore');
+        if (useSheetStore.getState().syncStatus === 'error') {
+          useSheetStore.getState().setSyncStatus('synced');
+          useSheetStore.getState().setSyncError(null);
+        }
+      } catch {
+        // ignore
+      }
     } catch (err) {
       console.warn('Could not sync reminder settings to Firestore:', err);
+      // Reflect failure in sync badge
+      try {
+        const { useSheetStore } = await import('@/stores/useSheetStore');
+        useSheetStore.getState().setSyncStatus('error');
+        useSheetStore.getState().setSyncError(err instanceof Error ? err.message : String(err));
+      } catch {
+        // ignore
+      }
     }
   }
 }

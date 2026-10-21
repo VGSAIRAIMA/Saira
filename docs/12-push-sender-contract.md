@@ -26,6 +26,7 @@ users/{uid}/meta/settings
 Fields:
 | Field | Type | Default | Meaning |
 |---|---|---|---|
+| `tz` | `string` | `"Asia/Kolkata"` | Timezone for all schedule calculations |
 | `morningTime` | `string` | `"08:30"` | HH:MM (24-h) in IST |
 | `studyTime` | `string` | `"19:00"` | HH:MM (24-h) in IST |
 | `daysOfWeek` | `number[]` | `[0,1,2,3,4,5,6]` | JS weekday numbers (0=Sunday, 6=Saturday) |
@@ -37,6 +38,8 @@ Fields:
 | `dailyTarget` | `number` | `3` | Target items to complete per day (used by §2c) |
 | `coachTheme` | `"classic" \| "hero" \| "realm" \| "mahabharata" \| "mix"` | `"classic"` | which theme to pick lines from |
 | `firstName` | `string` | `"friend"` | **Learner's first name for `{name}` substitution** (see §2d) |
+| `voiceEnabled` | `boolean` | `true` | Coach voice audio narration enabled |
+| `hiddenIds` | `string[]` | `[]` | Optional array of hidden curriculum item IDs |
 
 ### 2b. Reminder state (last fired)
 ```

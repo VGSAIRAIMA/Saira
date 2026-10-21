@@ -101,6 +101,17 @@ export async function registerFcmToken(uid: string): Promise<string | null> {
     // A production implementation would use FieldValue.serverTimestamp() in a
     // transaction to guard createdAt; for this milestone a merge write is sufficient.
 
+    // Update notificationsEnabled=true in both local settings and users/{uid}/meta/settings
+    try {
+      const { loadLocalReminderSettings, saveReminderSettings } = await import('./reminderStorage');
+      const local = loadLocalReminderSettings();
+      if (!local.notificationsEnabled) {
+        await saveReminderSettings({ ...local, notificationsEnabled: true });
+      }
+    } catch {
+      // ignore
+    }
+
     return token;
   } catch (err) {
     // Token registration is best-effort — never throw to the caller.
@@ -111,13 +122,40 @@ export async function registerFcmToken(uid: string): Promise<string | null> {
 
 /**
  * Deletes this device's token document from Firestore and revokes the FCM token.
+ * If this was the user's last registered device, sets notificationsEnabled=false
+ * in users/{uid}/meta/settings.
  * Call on sign-out. Gracefully no-ops if anything is missing.
  */
 export async function deleteFcmToken(uid: string): Promise<void> {
   try {
+    let remainingDevicesCount = 0;
+
     // Delete the Firestore device doc first
     if (db) {
-      await deleteDoc(deviceDocRef(uid));
+      try {
+        const { collection, getDocs, doc, setDoc } = await import('firebase/firestore');
+        const snap = await getDocs(collection(db, 'users', uid, 'devices'));
+        // If this device is in the snapshot, remaining count after delete will be size - 1
+        remainingDevicesCount = Math.max(0, snap.size - 1);
+
+        await deleteDoc(deviceDocRef(uid));
+
+        // If this was the user's last device, disable notifications in meta/settings
+        if (remainingDevicesCount === 0) {
+          await setDoc(
+            doc(db, 'users', uid, 'meta', 'settings'),
+            { notificationsEnabled: false },
+            { merge: true }
+          );
+          const { loadLocalReminderSettings, saveReminderSettings } = await import('./reminderStorage');
+          const local = loadLocalReminderSettings();
+          if (local.notificationsEnabled) {
+            await saveReminderSettings({ ...local, notificationsEnabled: false });
+          }
+        }
+      } catch (err) {
+        console.warn('[FCM] device doc deletion error:', err);
+      }
     }
 
     // Tell Firebase to revoke the token (so the sender removes it from its list)

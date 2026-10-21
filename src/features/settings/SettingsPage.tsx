@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Bell,
   Clock,
@@ -50,14 +50,16 @@ export const SettingsPage: React.FC = () => {
       : 'default';
   });
 
-  const updateSetting = async <K extends keyof ReminderSettings>(
-    key: K,
-    val: ReminderSettings[K]
-  ) => {
-    const updated = { ...settings, [key]: val };
-    setSettings(updated);
-    await saveReminderSettings(updated);
-  };
+  const updateSetting = useCallback(
+    async <K extends keyof ReminderSettings>(key: K, val: ReminderSettings[K]) => {
+      setSettings((prev) => {
+        const updated = { ...prev, [key]: val };
+        void saveReminderSettings(updated);
+        return updated;
+      });
+    },
+    []
+  );
 
   const toggleDay = (dayId: number) => {
     const current = settings.daysOfWeek || [0, 1, 2, 3, 4, 5, 6];
@@ -71,12 +73,36 @@ export const SettingsPage: React.FC = () => {
     updateSetting('daysOfWeek', next);
   };
 
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && 'permissions' in navigator) {
+      navigator.permissions
+        .query({ name: 'notifications' as PermissionName })
+        .then((status) => {
+          const handleChange = () => {
+            const perm = Notification.permission;
+            setNotificationPermission(perm);
+            if (perm === 'denied') {
+              void updateSetting('notificationsEnabled', false);
+            }
+          };
+          status.addEventListener('change', handleChange);
+        })
+        .catch(() => {});
+    }
+  }, [updateSetting]);
+
   const handleRequestPermission = async () => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
       const perm = await Notification.requestPermission();
       setNotificationPermission(perm);
       if (perm === 'granted') {
-        updateSetting('notificationsEnabled', true);
+        await updateSetting('notificationsEnabled', true);
+        if (user?.uid) {
+          const { registerFcmToken } = await import('@/lib/fcm');
+          void registerFcmToken(user.uid);
+        }
+      } else {
+        await updateSetting('notificationsEnabled', false);
       }
     }
   };

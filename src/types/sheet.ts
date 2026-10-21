@@ -89,6 +89,7 @@ export interface ReminderSettings {
   daysOfWeek: number[];         // [0, 1, 2, 3, 4, 5, 6] (0 = Sunday, 1 = Monday, ...)
   voiceEnabled: boolean;        // default: true
   snoozeMinutes: number;        // default: 15
+  maxSnoozeCount?: number;      // default: 3
   quietHoursEnabled: boolean;   // default: false
   quietHoursStart: string;      // default: "22:00"
   quietHoursEnd: string;        // default: "07:00"

@@ -10,6 +10,12 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { ItemProgress, CustomItem, DayLog, Settings } from '@/types/sheet';
+import {
+  loadLocalReminderSettings,
+  mergeCloudSettingsToLocal,
+  toCloudSettings,
+} from './reminderStorage';
+import { persistSettings } from './storage';
 
 export interface UserDataBundle {
   progress: Record<string, ItemProgress>;
@@ -243,23 +249,39 @@ export async function syncFirstSignIn(
     opCount++;
   }
 
-  if (merged.settings || merged.hiddenIds.length > 0) {
-    batch.set(
-      doc(db, 'users', uid, 'meta', 'settings'),
-      {
-        ...(merged.settings || { tz: 'Asia/Kolkata', dailyTarget: 3 }),
-        hiddenIds: merged.hiddenIds,
-      },
-      { merge: true }
-    );
-    opCount++;
+  // Merge cloud settings with local settings & defaults
+  const cloudSettings = (cloudData.settings as Record<string, unknown> | undefined) || {};
+  if (Object.keys(cloudSettings).length > 0) {
+    mergeCloudSettingsToLocal(cloudSettings);
   }
+  const currentReminders = loadLocalReminderSettings();
+  const targetToUse = typeof cloudSettings.dailyTarget === 'number'
+    ? (cloudSettings.dailyTarget as number)
+    : (merged.settings?.dailyTarget || 3);
+
+  const fullSettingsPayload = {
+    ...toCloudSettings(currentReminders, targetToUse),
+    hiddenIds: merged.hiddenIds,
+  };
+
+  batch.set(
+    doc(db, 'users', uid, 'meta', 'settings'),
+    fullSettingsPayload,
+    { merge: true }
+  );
+  opCount++;
 
   if (opCount > 0) {
     await batch.commit();
   }
 
-  return merged;
+  return {
+    ...merged,
+    settings: {
+      tz: 'Asia/Kolkata',
+      dailyTarget: targetToUse,
+    },
+  };
 }
 
 /**
@@ -271,7 +293,7 @@ export function subscribeToUserFirestore(
     onProgressUpdate: (progress: Record<string, ItemProgress>) => void;
     onDaysUpdate: (dayLogs: Record<string, DayLog>) => void;
     onCustomUpdate: (custom: CustomItem[]) => void;
-    onSettingsUpdate?: (settings: { hiddenIds?: string[] }) => void;
+    onSettingsUpdate?: (settings: Record<string, unknown>) => void;
     onError?: (err: Error) => void;
   }
 ): Unsubscribe {
@@ -325,7 +347,7 @@ export function subscribeToUserFirestore(
       doc(db, 'users', uid, 'meta', 'settings'),
       (snap) => {
         if (snap.exists() && callbacks.onSettingsUpdate) {
-          callbacks.onSettingsUpdate(snap.data() as { hiddenIds?: string[] });
+          callbacks.onSettingsUpdate(snap.data() as Record<string, unknown>);
         }
       },
       handleError
@@ -397,6 +419,7 @@ export function initCloudSync(
       mergeRemoteDays: (dayLogs: Record<string, DayLog>) => void;
       mergeRemoteCustom: (custom: CustomItem[]) => void;
       mergeRemoteHiddenIds: (hiddenIds: string[]) => void;
+      setDailyTarget: (target: number) => Promise<void>;
     };
   },
   authStore: {
@@ -477,9 +500,15 @@ export function initCloudSync(
           sheetStore.getState().mergeRemoteCustom(remoteCustom);
         },
         onSettingsUpdate: (settings) => {
-          if (settings.hiddenIds) {
-            sheetStore.getState().mergeRemoteHiddenIds(settings.hiddenIds);
+          if (Array.isArray(settings.hiddenIds)) {
+            sheetStore.getState().mergeRemoteHiddenIds(settings.hiddenIds as string[]);
           }
+          if (typeof settings.dailyTarget === 'number') {
+            const nextTarget = settings.dailyTarget as number;
+            sheetStore.getState().setDailyTarget(nextTarget);
+            void persistSettings({ tz: 'Asia/Kolkata', dailyTarget: nextTarget });
+          }
+          mergeCloudSettingsToLocal(settings);
         },
         onError: (err) => {
           console.error('Firestore subscription error:', err);

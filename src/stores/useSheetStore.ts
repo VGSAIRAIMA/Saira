@@ -166,12 +166,23 @@ export const useSheetStore = create<SheetState>((set, get) => ({
 
     const user = auth?.currentUser;
     if (user && db) {
-      const { doc, setDoc } = await import('firebase/firestore');
-      await setDoc(
-        doc(db, 'users', user.uid, 'meta', 'settings'),
-        { dailyTarget: valid },
-        { merge: true }
-      ).catch(console.error);
+      try {
+        const { doc, setDoc } = await import('firebase/firestore');
+        await setDoc(
+          doc(db, 'users', user.uid, 'meta', 'settings'),
+          { dailyTarget: valid, tz: DEFAULT_TIMEZONE },
+          { merge: true }
+        );
+        if (get().syncStatus === 'error') {
+          set({ syncStatus: 'synced', syncError: null });
+        }
+      } catch (err) {
+        console.error('Failed to sync daily target to Firestore:', err);
+        set({
+          syncStatus: 'error',
+          syncError: err instanceof Error ? err.message : String(err),
+        });
+      }
     }
   },
 
@@ -228,16 +239,21 @@ export const useSheetStore = create<SheetState>((set, get) => ({
 
   applyCloudSync: async (bundle: UserDataBundle) => {
     const hiddenSet = new Set(bundle.hiddenIds || []);
+    const cloudDailyTarget = bundle.settings?.dailyTarget;
     set({
       progress: bundle.progress,
       customItems: bundle.customItems,
       dayLogs: bundle.dayLogs,
       hiddenIds: hiddenSet,
+      ...(typeof cloudDailyTarget === 'number' ? { dailyTarget: cloudDailyTarget } : {}),
     });
     await Promise.all([
       persistProgressAndDayLog(bundle.progress, bundle.dayLogs, get().lastTouchedId || undefined),
       persistCustomItems(bundle.customItems),
       persistHiddenItems(hiddenSet),
+      ...(typeof cloudDailyTarget === 'number'
+        ? [persistSettings({ tz: DEFAULT_TIMEZONE, dailyTarget: cloudDailyTarget })]
+        : []),
     ]);
   },
 
